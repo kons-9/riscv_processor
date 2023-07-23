@@ -6,19 +6,27 @@
 `define PREV_MACHINE 2'b11
 
 // decode opcode
-`define LUI 7'b0110111
-`define AUIPC 7'0010111
-`define OP 7'b1101111
-`define OP_IMM 7'b0010011
-`define JAL 7'b1101111
-`define JALR 7'b1100111
-`define BRANCH 7'b1100011
-`define LOAD 7'b0000011
-`define STORE 7'b0100011
+`define OPCODE_LUI 7'b0110111
+`define OPCODE_AUIPC 7'b0010111
+`define OPCODE_OP 7'b1101111
+`define OPCODE_OP_IMM 7'b0010011
+`define OPCODE_JAL 7'b1101111
+`define OPCODE_JALR 7'b1100111
+`define OPCODE_BRANCH 7'b1100011
+`define OPCODE_LOAD 7'b0000011
+`define OPCODE_STORE 7'b0100011
 // fence
-`define MISC_MEM 7'b0001111
+`define OPCODE_MISC_MEM 7'b0001111
 // ecall, ebreak and priviledged
-`define SYSTEM 7'b1110011
+`define OPCODE_SYSTEM 7'b1110011
+
+// decode type
+`define TYPE_R 3'b000
+`define TYPE_I 3'b001
+`define TYPE_S 3'b010
+`define TYPE_B 3'b011
+`define TYPE_U 3'b100
+`define TYPE_J 3'b101
 
 // ALU operation
 `define ALU_ADD 3'b000
@@ -49,4 +57,21 @@
 `define STORE_SB 3'b000
 `define STORE_SH 3'b001
 `define STORE_SW 3'b010
+
+// csr
+`define MSTATUS 12'h300
+`define MISA 12'h301
+`define MEDELEG 12'h302
+`define MIDELEG 12'h303
+`define MIE 12'h304
+`define MTVEC 12'h305
+`define MSCRATCH 12'h340
+`define MEPC 12'h341
+`define MCAUSE 12'h342
+`define MTVAL 12'h343
+`define MIP 12'h344
+
+// mstatus
+`define MSTATUS_MIE 3
+`define MSTATUS_MPIE 7
 
