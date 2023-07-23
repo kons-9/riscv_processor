@@ -1,4 +1,4 @@
-// `include "define.v"
+`include "define.v"
 
 module alu (
     input [2:0] alu_op,
@@ -13,7 +13,7 @@ module alu (
   wire is_sub_or_sra = funct7[6];
   assign out = alu_out(alu_op, in1, in2, is_sub_or_sra, is_r_type);
 
-  function static [31:0] alu_out;
+  function [31:0] alu_out;
     input [2:0] alu_op;
     input [31:0] in1;
     input [31:0] in2;

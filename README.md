@@ -8,5 +8,5 @@ rs32iの命令セットを実装しています。
 2. ebreak
 3. mret
 
-
-
+## todo
+branch jal operation

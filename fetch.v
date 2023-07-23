@@ -20,12 +20,14 @@ module instbram (
     input [7:0] addr,
     output reg [31:0] inst
 );
-  reg [31:0] mem[0:255];
+  reg [31:0] mem[0:16383];
+
   initial begin
-    $readmemh("instbram.mem", mem);
+    parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/code.hex";
+    $readmemh(FILENAME, mem);
   end
   always @(posedge clk) begin
-    inst <= mem[addr];
+    inst <= mem[addr>>2];
   end
 
 endmodule

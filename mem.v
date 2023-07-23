@@ -6,13 +6,15 @@ module mem (
     input [2:0] store_load_type,
     output [31:0] loaddata
 );
-  reg [31:0] mem[0:255];
+  reg [31:0] mem[0:32767];
+
   initial begin
-    $readmemh("mem.hex", mem);
+    parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/mem.hex";
+    $readmemh(FILENAME, mem);
   end
   assign loaddata = get_loaddata(addr, store_load_type);
 
-  function static [31:0] get_loaddata;
+  function [31:0] get_loaddata;
     input [13:0] addr;
     input [2:0] store_load_type;
     begin

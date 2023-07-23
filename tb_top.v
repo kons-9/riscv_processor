@@ -9,7 +9,7 @@ module tb_top ();
       .rst(rst)
   );
 
-  always_comb begin
+  always @* begin
     #5 clk = ~clk;
   end
 

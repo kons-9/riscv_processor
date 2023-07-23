@@ -15,6 +15,7 @@ module cpu_top (
   wire is_jump;
   wire [7:0] jump_addr;
   wire [7:0] pc_next;
+  wire [7:0] pc_plus4;
 
   gen_next_pc gen_next_pc (
       .rst(rst),
@@ -22,7 +23,8 @@ module cpu_top (
       .jump_addr(jump_addr),
       .pc(pc),
 
-      .pc_next(pc_next)
+      .pc_next (pc_next),
+      .pc_plus4(pc_plus4)
   );
 
   always @(posedge clk) begin
@@ -143,8 +145,10 @@ module cpu_top (
   writeback writeback (
       .is_writeback(is_writeback),
       .is_load(is_load),
+      .opcode_type(opcode_type),
       .loaddata(loaddata),
       .alu_out(alu_out),
+      .pc_plus4(pc_plus4),
 
       .we(we),
       .rd_data(rd_data)

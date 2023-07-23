@@ -37,7 +37,7 @@ module decode (
   assign imm_u = {inst[31:12], 12'b0};
   assign imm_j = {{11{inst[31]}}, inst[31], inst[19:12], inst[20], inst[30:21], 1'b0};
 
-  function static [31:0] decide_imm;
+  function [31:0] decide_imm;
     input [2:0] opcode_type;
     begin
       case (opcode_type)
@@ -53,7 +53,7 @@ module decode (
   endfunction
 
   // [ is_load , is_store, is_writeback, type] ]
-  function static [5:0] get_opcode_info;
+  function [5:0] get_opcode_info;
     input [6:0] opcode;
     begin
       case (opcode)
