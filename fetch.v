@@ -11,7 +11,7 @@ module fetch (
       .inst(inst)
   );
 
-  assign is_jump = (inst[6:0] == 7'b1100111);
+  assign is_jump = (inst[6:0] == 7'b110xx11);
 
 endmodule
 

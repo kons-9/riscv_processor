@@ -17,7 +17,7 @@ module mem (
     input [2:0] store_load_type;
     begin
       case (store_load_type)
-        `LOAD_LB: get_loaddata = {mem[addr][7], {24{mem[addr][7]}}};
+        `LOAD_LB: get_loaddata = {mem[addr][7:0], {24{mem[addr][7]}}};
         `LOAD_LH: get_loaddata = {mem[addr][15:0], {16{mem[addr][15]}}};
         `LOAD_LW: get_loaddata = mem[addr];
         default:  get_loaddata = mem[addr];

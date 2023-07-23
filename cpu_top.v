@@ -57,6 +57,9 @@ module cpu_top (
   wire [4:0] shamt;
   wire [2:0] opcode_type;
   wire is_r_type;
+  wire is_store;
+  wire is_load;
+  wire is_writeback;
 
   decode decode (
       .inst(inst),
@@ -71,7 +74,9 @@ module cpu_top (
       .imm(imm),
       .shamt(shamt),
       .is_r_type(is_r_type),
-      .is_store(is_store)
+      .is_store(is_store),
+      .is_load(is_load),
+      .is_writeback(is_writeback)
   );
 
   wire we;
@@ -117,7 +122,7 @@ module cpu_top (
   // ////////////////////////////////////////////
 
   // mem[rs1 + offset(imm)] -> rd
-  wire [31:0] mem_addr = alu_out;
+  wire [13:0] mem_addr = alu_out[13:0];
 
   wire [31:0] loaddata;
 
@@ -125,7 +130,7 @@ module cpu_top (
       .clk(clk),
       .is_store(is_store),
       .addr(mem_addr),
-      .wdata(mem_data),
+      .wdata(rs2_data),
       .store_load_type(funct3),
       .loaddata(loaddata)
   );
@@ -136,11 +141,12 @@ module cpu_top (
 
   // set we, rd_data
   writeback writeback (
-      .we(we),
-      .rd(rd),
+      .is_writeback(is_writeback),
+      .is_load(is_load),
       .loaddata(loaddata),
       .alu_out(alu_out),
 
+      .we(we),
       .rd_data(rd_data)
   );
 

@@ -10,7 +10,7 @@ module gen_next_pc (
 
   assign pc_next = func_next_pc(rst, is_jump, jump_addr, pc);
 
-  function [7:0] func_next_pc;
+  function static [7:0] func_next_pc;
     input rst;
     input is_jump;
     input [7:0] jump_addr;
