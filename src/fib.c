@@ -1,7 +1,7 @@
 int fib(int n);
 
 int main() {
-    fib(3);
+    fib(5);
     while (1)
         ;
     return 0;

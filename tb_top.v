@@ -20,7 +20,7 @@ module tb_top ();
     rst = 1;
     #100 rst = 0;
 
-    repeat (200) begin
+    repeat (10) begin
       $display();
       $display("pc: %d", cpu_top.pc);
       $display("nextpc: %d", cpu_top.pc_next);
@@ -33,9 +33,15 @@ module tb_top ();
       #10;
     end
 
+    repeat (10000) begin
+      #10;
+    end
+
     $display();
     // ra register
     $display("ra: %b", cpu_top.regfile.regs[1]);
+    // a0 register
+    $display("a0: %b", cpu_top.regfile.regs[10]);
     $finish;
 
   end

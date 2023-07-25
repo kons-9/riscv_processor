@@ -31,7 +31,7 @@ module instbram (
   reg [31:0] mem[0:16383];
   // reg [31:0] mem[0:16383];
 
-  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/add.hex";
+  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/fib.hex";
   integer i;
   initial begin
     // initialize memory to zero

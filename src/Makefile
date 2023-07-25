@@ -9,7 +9,7 @@ CFILES = $(wildcard *.c)
 SFILES = $(filter-out start.s,$(wildcard *.s))
 
 # all hex files
-all: $(CFILES:.c=.binary) $(SFILES:.s=.binary) $(CFILES:.c=.hex) $(SFILES:.s=.hex) $(CFILES:.c=.s)
+all: $(CFILES:.c=.binary) $(SFILES:.s=.binary) $(CFILES:.c=.hex) $(SFILES:.s=.hex) $(CFILES:.c=.s) $(CFILES:.c=.o) $(SFILES:.s=.o) $(CFILES:.c=.dump) $(SFILES:.s=.dump)
 
 %.binary: %.hex
 	python3 hex2bin.py $< $@
@@ -17,6 +17,8 @@ all: $(CFILES:.c=.binary) $(SFILES:.s=.binary) $(CFILES:.c=.hex) $(SFILES:.s=.he
 start.o: start.s
 	$(CC) $(CFLAGS) -c $< -o $@
 
+%.dump: %.elf
+	$(OBJDUMP) -d $< > $@
 %.o: %.s
 	$(CC) $(CFLAGS) -c $< -o $@
 %.bin: %.elf

@@ -1,0 +1,15 @@
+
+sub.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text.startup:
+
+00000000 <_start>:
+   0:	004000ef          	jal	4 <main>
+
+Disassembly of section .text:
+
+00000004 <main>:
+   4:	00100113          	li	sp,1
+   8:	402000b3          	neg	ra,sp
+   c:	0000006f          	j	c <main+0x8>
