@@ -4,7 +4,7 @@ module writeback (
     input [31:0] alu_out,
     input [31:0] loaddata,
     input [2:0] opcode_type,
-    input [7:0] pc_plus4,
+    input [31:0] pc_plus4,
 
     output we,
     output [31:0] rd_data

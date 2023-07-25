@@ -1,5 +1,4 @@
-// top module
-//
+`include "define.v"
 module cpu_top (
     input clk,
     input rst
@@ -7,20 +6,30 @@ module cpu_top (
 
   reg is_interrupt = 0;
   reg is_exception = 0;
-  reg [7:0] pc;
+  reg [31:0] pc;
 
   //////////////////////////////////////////////////
   // fetch stage
   // //////////////////////////////////////////////
-  wire is_jump;
+  wire is_jump_operation;
+  wire is_branch_jump;
+  wire is_jal;
+  wire is_jalr;
+  wire is_branch;
   wire [7:0] jump_addr;
-  wire [7:0] pc_next;
-  wire [7:0] pc_plus4;
+  wire [31:0] pc_next;
+  wire [31:0] pc_plus4;
+
+  wire [31:0] alu_out;
 
   gen_next_pc gen_next_pc (
       .rst(rst),
-      .is_jump(is_jump),
-      .jump_addr(jump_addr),
+      .is_jump(is_jump_operation),
+      .is_branch_jump(is_branch_jump),
+      .is_jal(is_jal),
+      .is_jalr(is_jalr),
+      .is_branch(is_branch),
+      .alu_out(alu_out),
       .pc(pc),
 
       .pc_next (pc_next),
@@ -42,7 +51,10 @@ module cpu_top (
       .pc (pc),
 
       .inst(inst),
-      .is_jump(is_jump)
+      .is_jump(is_jump_operation),
+      .is_jal(is_jal),
+      .is_jalr(is_jalr),
+      .is_branch(is_branch)
   );
 
   ////////////////////////////////////////////////
@@ -62,6 +74,7 @@ module cpu_top (
   wire is_store;
   wire is_load;
   wire is_writeback;
+  wire using_pc = is_jump_operation && (is_jal || is_branch);
 
   decode decode (
       .inst(inst),
@@ -103,10 +116,9 @@ module cpu_top (
   // execute stage
   // //////////////////////////////////////////////
 
-  wire [ 2:0] alu_op = funct3;
-  wire [31:0] alu_in1 = rs1_data;
+  wire [ 2:0] alu_op = is_jump_operation ? `ALU_ADD : funct3;
+  wire [31:0] alu_in1 = using_pc ? pc : rs1_data;
   wire [31:0] alu_in2 = is_r_type ? rs2_data : imm;
-  wire [31:0] alu_out;
 
   alu alu (
       .alu_op(alu_op),
@@ -117,6 +129,13 @@ module cpu_top (
       .is_r_type(is_r_type),
 
       .out(alu_out)
+  );
+
+  branch_conditional branch_conditional (
+      .branch_op(funct3),
+      .rs1_data(rs1_data),
+      .rs2_data(rs2_data),
+      .is_branch_jump(is_branch_jump)
   );
 
   ////////////////////////////////////////////////

@@ -1,9 +1,12 @@
 module fetch (
     input clk,
-    input [7:0] pc,
+    input [31:0] pc,
 
     output [31:0] inst,
-    output wire is_jump
+    output wire is_jump,
+    output wire is_jal,
+    output wire is_jalr,
+    output wire is_branch
 );
   instbram instbram (
       .clk (clk),
@@ -11,7 +14,11 @@ module fetch (
       .inst(inst)
   );
 
+  // for branch prediction
   assign is_jump = (inst[6:0] == 7'b110xx11);
+  assign is_jal = (inst[3] == 1);
+  assign is_jalr = (inst[2] == 1);
+  assign is_branch = (~is_jal & ~is_jalr);
 
 endmodule
 
