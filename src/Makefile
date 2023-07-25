@@ -9,7 +9,7 @@ CFILES = $(wildcard *.c)
 SFILES = $(filter-out start.s,$(wildcard *.s))
 
 # all hex files
-all: $(CFILES:.c=.binary) $(SFILES:.s=.binary) $(CFILES:.c=.hex) $(SFILES:.s=.hex)
+all: $(CFILES:.c=.binary) $(SFILES:.s=.binary) $(CFILES:.c=.hex) $(SFILES:.s=.hex) $(CFILES:.c=.s)
 
 %.binary: %.hex
 	python3 hex2bin.py $< $@
