@@ -7,7 +7,7 @@ LDFLAGS = -T link.ld -nostdlib -static
 
 CFILES = $(wildcard *.c)
 
-all: $(BINFILES) $(HEXFILES) $(ELFFILES) $(SFILES)
+all: $(BINFILES) $(HEXFILES) $(ELFFILES) $(SFILES) Makefile
 
 start.o: start.s
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -43,6 +43,6 @@ endef
 $(foreach cfile,$(CFILES),$(eval $(call make_s_bin_hex_from_c,$(cfile),$(cfile:.c=.o),$(cfile:.c=.bin),$(cfile:.c=.elf),$(cfile:.c=.hex),$(cfile:.c=.s))))
 
 clean:
-	rm -f *.o *.bin *.hex *.elf *.s
+	rm -f *.bin *.hex *.elf *.o $(CFILES:.c=.s)
 
 .PHONY: all clean

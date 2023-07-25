@@ -2,8 +2,8 @@ cpu
 bin/*
 target
 src/*.o
-!src/start.o
 src/*.s
+!src/start.s
 src/*.elf
 src/*.bin
 
