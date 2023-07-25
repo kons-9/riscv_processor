@@ -1,7 +1,5 @@
 int main() {
-    int a = 1;
-    int b = 2;
-    int c = a + b;
+    int c = 1 + 2;
     while (1)
         ;
     return 0;

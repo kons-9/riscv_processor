@@ -6,12 +6,27 @@ CFLAGS = -march=rv32i -ffreestanding -Wall -Wextra -O0
 LDFLAGS = -T link.ld -nostdlib -static 
 
 CFILES = $(wildcard *.c)
+SFILES = $(filter-out start.s,$(wildcard *.s))
 
 # all hex files
-all: $(CFILES:.c=.hex)
+all: $(CFILES:.c=.binary) $(SFILES:.s=.binary) $(CFILES:.c=.hex) $(SFILES:.s=.hex)
+
+%.binary: %.hex
+	python3 hex2bin.py $< $@
 
 start.o: start.s
 	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.s
+	$(CC) $(CFLAGS) -c $< -o $@
+%.bin: %.elf
+	$(OBJCOPY) -O binary $< $@
+%.elf: %.o start.o
+	$(LD) $(LDFLAGS) start.o $< -o $@
+%.hex: %.bin
+	hexdump -v -e '1/4 "%08x" "\n"' $< > $@
+%.s: %.c Makefile
+	$(CC) $(CFLAGS) -S $< -o $@
 
 define make_s_bin_hex_from_c
 # 1: c
@@ -40,10 +55,10 @@ $(5): $(3)
 $(6): $(1) Makefile
 	$(CC) $(CFLAGS) -S $$< -o $$@
 endef
-
-$(foreach cfile,$(CFILES),$(eval $(call make_s_bin_hex_from_c,$(cfile),$(cfile:.c=.o),$(cfile:.c=.bin),$(cfile:.c=.elf),$(cfile:.c=.hex),$(cfile:.c=.s))))
+#
+# $(foreach cfile,$(CFILES),$(eval $(call make_s_bin_hex_from_c,$(cfile),$(cfile:.c=.o),$(cfile:.c=.bin),$(cfile:.c=.elf),$(cfile:.c=.hex),$(cfile:.c=.s))))
 
 clean:
-	rm -f *.bin *.hex *.elf *.o $(CFILES:.c=.s)
+	rm -f *.bin *.hex *.elf *.o $(CFILES:.c=.s) *.binary
 
 .PHONY: all clean
