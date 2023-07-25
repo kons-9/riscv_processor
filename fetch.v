@@ -15,9 +15,10 @@ module fetch (
   );
 
   // for branch prediction
-  assign is_jump = (inst[6:0] == 7'b110xx11);
-  assign is_jal = (inst[3] == 1);
-  assign is_jalr = (inst[2] == 1);
+  // assign is_jump = (inst[6:0] == 7'b110xx11);
+  assign is_jump = (inst[1:0] == 2'b11 && inst[6:4] == 3'b110);
+  assign is_jal = (inst[3] & 1);
+  assign is_jalr = (inst[2] & 1);
   assign is_branch = (~is_jal & ~is_jalr);
 
 endmodule
@@ -28,12 +29,19 @@ module instbram (
     output reg [31:0] inst
 );
   reg [31:0] mem[0:16383];
+  // reg [31:0] mem[0:16383];
 
+  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/code.hex";
+  integer i;
   initial begin
-    parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/code.hex";
+    // initialize memory to zero
+    for (i = 0; i < 16384; i = i + 1) begin
+      mem[i] = 0;
+    end
     $readmemh(FILENAME, mem);
   end
-  always @(posedge clk) begin
+  always @(*) begin
+    // inst <= 32'h074000EF;
     inst <= mem[addr>>2];
   end
 

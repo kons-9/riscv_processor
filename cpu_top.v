@@ -37,11 +37,7 @@ module cpu_top (
   );
 
   always @(posedge clk) begin
-    if (rst) begin
-      pc <= 0;
-    end else begin
-      pc <= pc_next;
-    end
+    pc <= pc_next;
   end
 
 

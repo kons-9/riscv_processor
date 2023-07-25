@@ -9,19 +9,28 @@ module tb_top ();
       .rst(rst)
   );
 
-  always @* begin
-    #5 clk = ~clk;
+  always begin
+    #5 clk = !clk;
   end
 
   initial begin
+    #1 clk = 0;
     rst = 1;
-    #10 rst = 0;
+    #100 rst = 0;
 
     repeat (100) begin
+      $display();
       $display("pc: %d", cpu_top.pc);
+      $display("nextpc: %d", cpu_top.pc_next);
+      $display("imm: %b", cpu_top.imm);
       $display("inst: %b", cpu_top.inst);
+      $display("opcode: %b", cpu_top.opcode);
+      $display("rs1_data: %b", cpu_top.rs1_data);
+      $display("rs2_data: %b", cpu_top.rs2_data);
+      $display("alu_out: %b", cpu_top.alu_out);
       #10;
     end
+    $finish;
 
   end
 endmodule

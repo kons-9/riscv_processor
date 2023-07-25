@@ -13,9 +13,8 @@ module gen_next_pc (
 );
   // todo branch prediction
 
-  assign jump_addr = alu_out;
-  assign pc_plus4  = pc + 8'h04;
-  assign pc_next   = func_next_pc(rst, is_jump, jump_addr, pc);
+  assign pc_plus4 = pc + 8'h04;
+  assign pc_next  = func_next_pc(rst, is_jump, alu_out, pc);
 
   function [31:0] func_next_pc;
     input rst;

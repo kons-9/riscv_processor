@@ -8,8 +8,8 @@ module mem (
 );
   reg [31:0] mem[0:32767];
 
+  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/mem.hex";
   initial begin
-    parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/mem.hex";
     $readmemh(FILENAME, mem);
   end
   assign loaddata = get_loaddata(addr, store_load_type);
