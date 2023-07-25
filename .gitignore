@@ -1,4 +1,12 @@
 cpu
 bin/*
 target
-src
+src/*.o
+!src/start.o
+src/*.s
+src/*.elf
+src/*.bin
+
+
+
+
