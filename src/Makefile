@@ -7,7 +7,8 @@ LDFLAGS = -T link.ld -nostdlib -static
 
 CFILES = $(wildcard *.c)
 
-all: $(BINFILES) $(HEXFILES) $(ELFFILES) $(SFILES) Makefile
+# all hex files
+all: $(CFILES:.c=.hex)
 
 start.o: start.s
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -36,7 +37,7 @@ $(5): $(3)
 	hexdump -v -e '1/4 "%08x" "\n"' $$< > $$@
 
 # make .s file from .c file
-$(6): $(1)
+$(6): $(1) Makefile
 	$(CC) $(CFLAGS) -S $$< -o $$@
 endef
 
