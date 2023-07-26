@@ -15,11 +15,13 @@ def get_files(path):
 def hex2bin(hex_file, bin_file):
     with open(hex_file, 'r') as f:
         with open(bin_file, 'w') as b:
+            cnt = 0
             for line in f.readlines():
                 n = int(line, 16)
                 bina = "{:032b}".format(n)
-                readable = bina[0:7] + "_" + bina[7:12] + "_" + bina[12:17] + "_" + bina[17:20] + "_" + bina[20:25] + "_" + bina[25:32] + "\n"
+                readable = "{:08x}".format(cnt) + ": " + bina[0:7] + "_" + bina[7:12] + "_" + bina[12:17] + "_" + bina[17:20] + "_" + bina[20:25] + "_" + bina[25:32] + "\n"
                 b.write(readable)
+                cnt += 4
     return bin_file
 
 if __name__ == '__main__':
@@ -32,11 +34,11 @@ if __name__ == '__main__':
         for file in files:
             if file.endswith(".hex"):
                 hex_file = file
-                bin_file = file.replace(".hex", ".bin")
+                bin_file = file.replace(".hex", ".binary")
                 hex2bin(hex_file, bin_file)
     elif len(argv) == 2:
         hex_file = argv[1]
-        bin_file = hex_file.replace(".hex", ".bin")
+        bin_file = hex_file.replace(".hex", ".binary")
         hex2bin(hex_file, bin_file)
     elif len(argv) == 3:
         hex_file = argv[1]
