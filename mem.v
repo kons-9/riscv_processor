@@ -12,18 +12,20 @@ module mem (
   initial begin
     $readmemh(FILENAME, mem);
   end
-  assign loaddata = get_loaddata(mem, addr, store_load_type);
+  wire [31:0] data;
+  assign data= mem[addr];
+
+  assign loaddata = get_loaddata(data, store_load_type);
 
   function [31:0] get_loaddata;
-    input [31:0] mem [0:32767];
-    input [13:0] addr;
+    input [31:0] data;
     input [2:0] store_load_type;
     begin
       case (store_load_type)
-        `LOAD_LB: get_loaddata = {mem[addr][7:0], {24{mem[addr][7]}}};
-        `LOAD_LH: get_loaddata = {mem[addr][15:0], {16{mem[addr][15]}}};
-        `LOAD_LW: get_loaddata = mem[addr];
-        default:  get_loaddata = mem[addr];
+        `LOAD_LB: get_loaddata = {data[7:0], {24{data[7]}}};
+        `LOAD_LH: get_loaddata = {data[15:0], {16{data[15]}}};
+        `LOAD_LW: get_loaddata = data;
+        default:  get_loaddata = data;
       endcase
     end
   endfunction

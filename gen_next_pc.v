@@ -14,7 +14,7 @@ module gen_next_pc (
   // todo branch prediction
 
   assign pc_plus4 = pc + 8'h04;
-  assign pc_next  = gen_next_pc_func(rst, is_jump, is_jal, is_jalr, is_branch, is_branch_jump, alu_out, pc_plus4);
+  assign pc_next  = func_next_pc(rst, is_jump, is_jal, is_jalr, is_branch, is_branch_jump, alu_out, pc_plus4);
 
   function [31:0] func_next_pc;
     input rst;
