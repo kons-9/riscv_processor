@@ -12,7 +12,7 @@ module alu (
 );
   wire is_sub_or_sra = funct7[6];
 
-  assign out = alu_out(alu_op, in1, in2, is_sub_or_sra, is_r_type);
+  assign out = alu_out(alu_op, in1, in2, is_sub_or_sra, is_r_type, shamt);
 
   function [31:0] alu_out;
     input [2:0] alu_op;
@@ -20,6 +20,7 @@ module alu (
     input [31:0] in2;
     input is_sub_or_sra;
     input is_r_type;
+    input [4:0] shamt;
 
     begin
       case (alu_op)

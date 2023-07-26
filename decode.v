@@ -22,7 +22,7 @@ module decode (
   assign rs2 = inst[24:20];
   assign funct7 = inst[31:25];
   assign {is_load, is_store, is_writeback, opcode_type} = get_opcode_info(opcode);
-  assign imm = decide_imm(opcode_type);
+  assign imm = decide_imm(opcode_type, inst);
   assign is_r_type = (opcode_type == `TYPE_R);
 
   wire [31:0] imm_i;
@@ -31,22 +31,17 @@ module decode (
   wire [31:0] imm_u;
   wire [31:0] imm_j;
 
-  assign imm_i = {{20{inst[31]}}, inst[31:20]};
-  assign imm_s = {{20{inst[31]}}, inst[31:25], inst[11:7]};
-  assign imm_b = {{19{inst[31]}}, inst[31], inst[7], inst[30:25], inst[11:8], 1'b0};
-  assign imm_u = {inst[31:12], 12'b0};
-  assign imm_j = {{11{inst[31]}}, inst[31], inst[19:12], inst[20], inst[30:21], 1'b0};
-
   function [31:0] decide_imm;
     input [2:0] opcode_type;
+    input [31:0] inst;
     begin
       case (opcode_type)
         `TYPE_R: decide_imm = 0;
-        `TYPE_I: decide_imm = imm_i;
-        `TYPE_S: decide_imm = imm_s;
-        `TYPE_B: decide_imm = imm_b;
-        `TYPE_U: decide_imm = imm_u;
-        `TYPE_J: decide_imm = imm_j;
+        `TYPE_I: decide_imm = {{20{inst[31]}}, inst[31:20]};
+        `TYPE_S: decide_imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
+        `TYPE_B: decide_imm = {{19{inst[31]}}, inst[31], inst[7], inst[30:25], inst[11:8], 1'b0};
+        `TYPE_U: decide_imm = {inst[31:12], 12'b0};
+        `TYPE_J: decide_imm = {{11{inst[31]}}, inst[31], inst[19:12], inst[20], inst[30:21], 1'b0};
         default: decide_imm = 0;
       endcase
     end

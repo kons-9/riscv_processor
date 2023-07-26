@@ -12,9 +12,10 @@ module mem (
   initial begin
     $readmemh(FILENAME, mem);
   end
-  assign loaddata = get_loaddata(addr, store_load_type);
+  assign loaddata = get_loaddata(mem, addr, store_load_type);
 
   function [31:0] get_loaddata;
+    input [31:0] mem [0:32767];
     input [13:0] addr;
     input [2:0] store_load_type;
     begin
