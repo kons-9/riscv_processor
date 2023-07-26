@@ -14,6 +14,8 @@ module tb_top ();
   end
 
   initial begin
+    $dumpfile("tb_top.vcd");
+    $dumpvars(0, tb_top);
     #1 clk = 0;
     rst = 1;
     #100 rst = 0;
