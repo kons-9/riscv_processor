@@ -20,7 +20,7 @@ module tb_top ();
     rst = 1;
     #100 rst = 0;
 
-    repeat (20) begin
+    repeat (200) begin
       $display();
       $display("pc: %d", cpu_top.pc);
       $display("nextpc: %d", cpu_top.pc_next);
