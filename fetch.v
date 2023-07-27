@@ -8,9 +8,12 @@ module fetch (
     output wire is_jalr,
     output wire is_branch
 );
+
+  wire [7:0] addr;
+  assign addr = pc[7:0];
   instbram instbram (
       .clk (clk),
-      .addr(pc),
+      .addr(pc[7:0]),
       .inst(inst)
   );
 
@@ -31,7 +34,7 @@ module instbram (
   reg [31:0] mem[0:16383];
   // reg [31:0] mem[0:16383];
 
-  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/fib.hex";
+  parameter FILENAME = "/Users/kons9/Documents2/programming/riscv_processor/bin/all_operation_test.hex";
   integer i;
   initial begin
     // initialize memory to zero

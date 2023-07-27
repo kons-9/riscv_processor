@@ -22,9 +22,11 @@ module mem (
     input [2:0] store_load_type;
     begin
       case (store_load_type)
-        `LOAD_LB: get_loaddata = {data[7:0], {24{data[7]}}};
-        `LOAD_LH: get_loaddata = {data[15:0], {16{data[15]}}};
+        `LOAD_LB: get_loaddata = {{24{data[7]}}, data[7:0]};
+        `LOAD_LH: get_loaddata = {{16{data[15]}}, data[15:0]};
         `LOAD_LW: get_loaddata = data;
+        `LOAD_LBU: get_loaddata = {{24{1'b0}}, data[7:0]};
+        `LOAD_LHU: get_loaddata = {{16{1'b0}}, data[15:0]};
         default:  get_loaddata = data;
       endcase
     end

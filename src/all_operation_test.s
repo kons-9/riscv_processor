@@ -7,7 +7,9 @@ main:
   sub x30, x29, x28
   sll x30, x29, x28
   slt x30, x29, x28
+  slt x30, x28, x29
   sltu x30, x29, x28
+  sltu x30, x28, x29
   xor x30, x29, x28
   srl x30, x29, x28
   sra x30, x29, x28
@@ -17,6 +19,7 @@ main:
   sb x29, 0x0(x28) /* store */
   sh x29, 0x0(x28)
   sw x29, 0x0(x28)
+  sw x28, 0x1(x28)
 
   addi x30, x29, 0x8 /* itype */
   slti x30, x29, 0x8
@@ -27,9 +30,9 @@ main:
   slli x30, x29, 0x3
   srli x30, x29, 0x3
   srai x30, x29, 0x3
-  lb x30, 0x0(x28) /* load */
-  lh x30, 0x0(x28)
-  lw x30, 0x0(x28)
+  lb x30, 0x1(x28) /* load */
+  lh x30, 0x1(x28)
+  lw x30, 0x1(x28)
   lbu x30, 0x0(x28)
   lhu x30, 0x0(x28)
 
@@ -40,8 +43,8 @@ main:
   bne x29, x29, .L4
   bne x29, x28, .L4
 .bne:
-  blt x29, x28, .L5
   blt x28, x29, .L5
+  blt x29, x28, .L5
 .blt:
   bge x28, x29, .L6
   bge x29, x28, .L6
@@ -49,8 +52,8 @@ main:
   bltu x29, x28, .L7
   bltu x28, x29, .L7
 .bltu:
-  bgeu x28, x29, .L8
   bgeu x29, x28, .L8
+  bgeu x28, x29, .L8
 .bgeu:
   j .bgeu
 

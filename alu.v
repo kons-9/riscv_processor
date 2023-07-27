@@ -11,8 +11,9 @@ module alu (
     output [31:0] out
 );
   wire is_sub_or_sra = funct7[5];
+  wire [4:0] shift = (is_r_type) ? in2[4:0] : shamt;
 
-  assign out = alu_out(alu_op, in1, in2, is_sub_or_sra, is_r_type, shamt);
+  assign out = alu_out(alu_op, in1, in2, is_sub_or_sra, is_r_type, shift);
 
   function [31:0] alu_out;
     input [2:0] alu_op;
@@ -32,9 +33,7 @@ module alu (
           end
         end
         `ALU_SLL: begin
-          // todo: use one operator
-          if (is_r_type) alu_out = in1 << in2;
-          else alu_out = in1 << shamt;
+          alu_out = in1 << shamt;
         end
         `ALU_SLT:  alu_out = ($signed(in1) < $signed(in2)) ? 1 : 0;
         `ALU_SLTU: alu_out = (in1 < in2) ? 1 : 0;
@@ -42,12 +41,10 @@ module alu (
         `ALU_SRL: begin
           if (is_sub_or_sra) begin
             // arithmetic shift
-            if (is_r_type) alu_out = (in1) >>> shamt;
-            else alu_out = (in1) >>> in2;
+            alu_out = $signed(in1) >>> shamt;
           end else begin
             // logical shift
-            if (is_r_type) alu_out = (in1) >> shamt;
-            else alu_out = (in1) >> in2;
+            alu_out = (in1) >> shamt;
           end
         end
         `ALU_OR:   alu_out = in1 | in2;

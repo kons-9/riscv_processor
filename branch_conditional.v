@@ -17,7 +17,7 @@ module branch_conditional (
         `BRANCH_BNE: func_branch_conditional = (rs1_data != rs2_data);
         `BRANCH_BLT: func_branch_conditional = ($signed(rs1_data) < $signed(rs2_data));
         `BRANCH_BGE: func_branch_conditional = ($signed(rs1_data) >= $signed(rs2_data));
-        `BRANCH_BLTU: func_branch_conditional = (rs1_data < rs2_data);
+        `BRANCH_BLTU: func_branch_conditional = ($unsigned(rs1_data) < $unsigned(rs2_data));
         `BRANCH_BGEU: func_branch_conditional = (rs1_data >= rs2_data);
         default: func_branch_conditional = 1'b0;
       endcase
