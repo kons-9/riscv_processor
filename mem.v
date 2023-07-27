@@ -33,9 +33,9 @@ module mem (
   always @(negedge clk) begin
     if (is_store) begin
       case (store_load_type)
-        `STORE_SB: mem[addr] <= wdata[7:0];
-        `STORE_SH: mem[addr] <= wdata[15:0];
-        `STORE_SW: mem[addr] <= wdata[31:0];
+        `STORE_SB: mem[addr][7:0] <= wdata[7:0];
+        `STORE_SH: mem[addr][15:0] <= wdata[15:0];
+        `STORE_SW: mem[addr] <= wdata;
         default:   mem[addr] <= wdata;
       endcase
     end

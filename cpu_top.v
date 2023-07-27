@@ -70,10 +70,12 @@ module cpu_top (
   wire is_store;
   wire is_load;
   wire is_writeback;
-  wire using_pc = is_jump_operation && (is_jal || is_branch);
+  wire using_pc;
+  assign using_pc = is_jump_operation && (is_jal || is_branch);
 
   decode decode (
       .inst(inst),
+      .is_jump(is_jump_operation),
 
       .opcode(opcode),
       .rs(rs),
@@ -87,7 +89,9 @@ module cpu_top (
       .is_r_type(is_r_type),
       .is_store(is_store),
       .is_load(is_load),
-      .is_writeback(is_writeback)
+      .is_writeback(is_writeback),
+      .use_adder(use_adder),
+      .use_pc(using_pc)
   );
 
   wire we;
@@ -112,7 +116,7 @@ module cpu_top (
   // execute stage
   // //////////////////////////////////////////////
 
-  wire [ 2:0] alu_op = is_jump_operation ? `ALU_ADD : funct3;
+  wire [ 2:0] alu_op = use_adder ? `ALU_ADD : funct3;
   wire [31:0] alu_in1 = using_pc ? pc : rs1_data;
   wire [31:0] alu_in2 = is_r_type ? rs2_data : imm;
 

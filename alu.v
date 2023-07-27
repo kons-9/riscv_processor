@@ -10,7 +10,7 @@ module alu (
 
     output [31:0] out
 );
-  wire is_sub_or_sra = funct7[6];
+  wire is_sub_or_sra = funct7[5];
 
   assign out = alu_out(alu_op, in1, in2, is_sub_or_sra, is_r_type, shamt);
 
@@ -33,8 +33,8 @@ module alu (
         end
         `ALU_SLL: begin
           // todo: use one operator
-          if (is_r_type) alu_out = in1 << shamt;
-          else alu_out = in1 << in2;
+          if (is_r_type) alu_out = in1 << in2;
+          else alu_out = in1 << shamt;
         end
         `ALU_SLT:  alu_out = ($signed(in1) < $signed(in2)) ? 1 : 0;
         `ALU_SLTU: alu_out = (in1 < in2) ? 1 : 0;

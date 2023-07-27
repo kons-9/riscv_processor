@@ -10,7 +10,7 @@ module regfile (
     output [31:0] rs2_data
 );
 
-  reg [31:0] regs[32];
+  reg [31:0] regs[31:0];
 
   assign rs1_data = regs[rs1];
   assign rs2_data = regs[rs2];

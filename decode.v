@@ -1,5 +1,6 @@
 module decode (
     input [31:0] inst,
+    input is_jump,
 
     output [6:0] opcode,
     output [4:0] rs,
@@ -13,7 +14,9 @@ module decode (
     output is_r_type,
     output is_store,
     output is_load,
-    output is_writeback
+    output is_writeback,
+    output use_adder,
+    output use_pc
 );
   assign opcode = inst[6:0];
   assign rd = inst[11:7];
@@ -21,9 +24,10 @@ module decode (
   assign rs = inst[19:15];
   assign rs2 = inst[24:20];
   assign funct7 = inst[31:25];
-  assign {is_load, is_store, is_writeback, opcode_type} = get_opcode_info(opcode);
+  assign {is_load, is_store, is_writeback, use_adder, opcode_type} = get_opcode_info(opcode);
   assign imm = decide_imm(opcode_type, inst);
   assign is_r_type = (opcode_type == `TYPE_R);
+  assign shamt = inst[24:20];
 
   wire [31:0] imm_i;
   wire [31:0] imm_s;
@@ -47,23 +51,23 @@ module decode (
     end
   endfunction
 
-  // [ is_load , is_store, is_writeback, type] ]
-  function [5:0] get_opcode_info;
+  // [ is_load , is_store, is_writeback, use_adder, type] ]
+  function [6:0] get_opcode_info;
     input [6:0] opcode;
     begin
       case (opcode)
-        `OPCODE_LUI: get_opcode_info = {1'b0, 1'b0, 1'b1, `TYPE_U};
-        `OPCODE_AUIPC: get_opcode_info = {1'b0, 1'b0, 1'b1, `TYPE_U};
-        `OPCODE_OP: get_opcode_info = {1'b0, 1'b0, 1'b1, `TYPE_R};
-        `OPCODE_OP_IMM: get_opcode_info = {1'b0, 1'b0, 1'b1, `TYPE_I};
-        `OPCODE_JAL: get_opcode_info = {1'b0, 1'b0, 1'b1, `TYPE_J};
-        `OPCODE_JALR: get_opcode_info = {1'b0, 1'b0, 1'b1, `TYPE_I};
-        `OPCODE_BRANCH: get_opcode_info = {1'b0, 1'b0, 1'b0, `TYPE_B};
-        `OPCODE_LOAD: get_opcode_info = {1'b1, 1'b0, 1'b1, `TYPE_I};
-        `OPCODE_STORE: get_opcode_info = {1'b0, 1'b1, 1'b0, `TYPE_S};
-        `OPCODE_MISC_MEM: get_opcode_info = {1'b0, 1'b0, 1'b0, `TYPE_I};
-        `OPCODE_SYSTEM: get_opcode_info = {1'b0, 1'b0, 1'b0, `TYPE_I};
-        default: get_opcode_info = {1'b0, 1'b0, 1'b0, `TYPE_I};
+        `OPCODE_LUI: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_U};
+        `OPCODE_AUIPC: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_U};
+        `OPCODE_OP: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_R};
+        `OPCODE_OP_IMM: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_I};
+        `OPCODE_JAL: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_J};
+        `OPCODE_JALR: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_J};
+        `OPCODE_BRANCH: get_opcode_info = {1'b0, 1'b0, 1'b0, 1'b1, `TYPE_B};
+        `OPCODE_LOAD: get_opcode_info = {1'b1, 1'b0, 1'b1, 1'b1, `TYPE_I};
+        `OPCODE_STORE: get_opcode_info = {1'b0, 1'b1, 1'b0, 1'b1, `TYPE_S};
+        `OPCODE_MISC_MEM: get_opcode_info = {1'b0, 1'b0, 1'b0, 1'b0, `TYPE_I};
+        `OPCODE_SYSTEM: get_opcode_info = {1'b0, 1'b0, 1'b0, 1'b0, `TYPE_I};
+        default: get_opcode_info = {1'b0, 1'b0, 1'b0, 1'b0, `TYPE_I};
       endcase
     end
   endfunction
