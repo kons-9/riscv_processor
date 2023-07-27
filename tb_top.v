@@ -48,8 +48,8 @@ module tb_top ();
     $display();
     // ra register
     $display("ra: %b", cpu_top.regfile.regs[1]);
-    // a0 register
-    $display("a0: %b", cpu_top.regfile.regs[10]);
+    // a5 register
+    $display("a5: %b", cpu_top.regfile.regs[15]);
     // x28 register
     $display("x28: %b", cpu_top.regfile.regs[28]);
     $finish;

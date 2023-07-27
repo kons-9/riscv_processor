@@ -27,6 +27,7 @@ start.o: start.s
 	$(LD) $(LDFLAGS) start.o $< -o $@
 %.hex: %.bin
 	hexdump -v -e '1/4 "%08x" "\n"' $< > $@
+	cp $@ ../bin/$@
 %.s: %.c Makefile
 	$(CC) $(CFLAGS) -S $< -o $@
 
@@ -61,6 +62,6 @@ endef
 # $(foreach cfile,$(CFILES),$(eval $(call make_s_bin_hex_from_c,$(cfile),$(cfile:.c=.o),$(cfile:.c=.bin),$(cfile:.c=.elf),$(cfile:.c=.hex),$(cfile:.c=.s))))
 
 clean:
-	rm -f *.bin *.hex *.elf *.o $(CFILES:.c=.s) *.binary
+	rm -f *.bin *.hex *.elf *.o $(CFILES:.c=.s) *.binary *.dump
 
 .PHONY: all clean
