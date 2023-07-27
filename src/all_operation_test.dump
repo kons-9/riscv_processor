@@ -1,0 +1,72 @@
+
+all_operation_test.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text.startup:
+
+00000000 <_start>:
+   0:	004000ef          	jal	4 <main>
+
+Disassembly of section .text:
+
+00000004 <main>:
+   4:	fff00e93          	li	t4,-1
+   8:	00200e13          	li	t3,2
+   c:	01ce8f33          	add	t5,t4,t3
+  10:	41ce8f33          	sub	t5,t4,t3
+  14:	01ce9f33          	sll	t5,t4,t3
+  18:	01ceaf33          	slt	t5,t4,t3
+  1c:	01cebf33          	sltu	t5,t4,t3
+  20:	01cecf33          	xor	t5,t4,t3
+  24:	01cedf33          	srl	t5,t4,t3
+  28:	41cedf33          	sra	t5,t4,t3
+  2c:	01ceef33          	or	t5,t4,t3
+  30:	01ceff33          	and	t5,t4,t3
+  34:	01de0023          	sb	t4,0(t3)
+  38:	01de1023          	sh	t4,0(t3)
+  3c:	01de2023          	sw	t4,0(t3)
+  40:	030e8f13          	add	t5,t4,48
+  44:	030eaf13          	slti	t5,t4,48
+  48:	030ebf13          	sltiu	t5,t4,48
+  4c:	030ecf13          	xor	t5,t4,48
+  50:	030eef13          	or	t5,t4,48
+  54:	030eff13          	and	t5,t4,48
+  58:	003e9f13          	sll	t5,t4,0x3
+  5c:	003edf13          	srl	t5,t4,0x3
+  60:	403edf13          	sra	t5,t4,0x3
+  64:	000e0f03          	lb	t5,0(t3)
+  68:	000e1f03          	lh	t5,0(t3)
+  6c:	000e2f03          	lw	t5,0(t3)
+  70:	000e4f03          	lbu	t5,0(t3)
+  74:	000e5f03          	lhu	t5,0(t3)
+  78:	03ce8a63          	beq	t4,t3,ac <.bgeu+0x4>
+  7c:	03de8863          	beq	t4,t4,ac <.bgeu+0x4>
+
+00000080 <.beq>:
+  80:	03de9863          	bne	t4,t4,b0 <.bgeu+0x8>
+  84:	03ce9663          	bne	t4,t3,b0 <.bgeu+0x8>
+
+00000088 <.bne>:
+  88:	03cec663          	blt	t4,t3,b4 <.bgeu+0xc>
+  8c:	03de4463          	blt	t3,t4,b4 <.bgeu+0xc>
+
+00000090 <.blt>:
+  90:	03de5463          	bge	t3,t4,b8 <.bgeu+0x10>
+  94:	03ced263          	bge	t4,t3,b8 <.bgeu+0x10>
+
+00000098 <.bge>:
+  98:	03cee263          	bltu	t4,t3,bc <.bgeu+0x14>
+  9c:	03de6063          	bltu	t3,t4,bc <.bgeu+0x14>
+
+000000a0 <.bltu>:
+  a0:	03de7063          	bgeu	t3,t4,c0 <.bgeu+0x18>
+  a4:	01cefe63          	bgeu	t4,t3,c0 <.bgeu+0x18>
+
+000000a8 <.bgeu>:
+  a8:	0000006f          	j	a8 <.bgeu>
+  ac:	fd5ff06f          	j	80 <.beq>
+  b0:	fd9ff06f          	j	88 <.bne>
+  b4:	fddff06f          	j	90 <.blt>
+  b8:	fe1ff06f          	j	98 <.bge>
+  bc:	fe5ff06f          	j	a0 <.bltu>
+  c0:	fe9ff06f          	j	a8 <.bgeu>

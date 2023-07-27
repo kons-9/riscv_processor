@@ -1,13 +1,13 @@
 cpu
+tmp
 bin/*
 target
 src/*.o
 src/*.s
 !src/start.s
+!src/*test*.s
 src/*.elf
 src/*.bin
 
 *.txt
 *.vcd
-
-
