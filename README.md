@@ -1,16 +1,24 @@
 # riscv processor
 
 特権命令付きのRISC-Vプロセッサです。
-rs32iの命令セットを実装しています。
+rs32i + zicarで、user mode + machine modeの命令セットを実装しています。
+インオーダプロセッサなのでfence命令は実装していません。
 
 ## サポートしている命令
 1. ecall
 2. ebreak
 3. mret
+4. wfi
+5. csrrw
+6. csrrs
+7. csrrc
+8. csrrwi
+9. csrrsi
+10. csrrci
 
-## cfile
+## make your code from c files
 もし、cファイルをコンパイルする場合は、以下のコマンドを実行してください。
-```
+```bash
 cd src
 vim hoge.c
 make
@@ -22,6 +30,13 @@ make
 3. riscv32-unknown-linux-gnu-objdump
 4. riscv32-unknown-linux-gnu-ld
 5. hexdump
+6. python3
 
 ここからダウンロードできます。
 https://github.com/riscv-collab/riscv-gnu-toolchain
+
+詳しくはsrc/Makefileを参照してください。
+
+## future work
+1. パイプライン化
+2. supervisor modeの実装

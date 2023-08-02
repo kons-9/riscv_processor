@@ -1,3 +1,5 @@
+`include "define.v"
+
 module decode (
     input [31:0] inst,
     input is_jump,
@@ -16,7 +18,10 @@ module decode (
     output is_load,
     output is_writeback,
     output use_adder,
-    output use_pc
+    output use_pc,
+
+    // for system call
+    output is_system
 );
   assign opcode = inst[6:0];
   assign rd = inst[11:7];
@@ -25,6 +30,7 @@ module decode (
   assign rs2 = inst[24:20];
   assign funct7 = inst[31:25];
   assign {is_load, is_store, is_writeback, use_adder, opcode_type} = get_opcode_info(opcode);
+  assign is_system = (opcode == `OPCODE_SYSTEM);
   assign imm = decide_imm(opcode_type, inst);
   assign is_r_type = (opcode_type == `TYPE_R);
   assign shamt = inst[24:20];

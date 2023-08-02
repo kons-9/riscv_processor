@@ -71,6 +71,7 @@ module cpu_top (
   wire is_load;
   wire is_writeback;
   wire using_pc;
+  wire is_system;
   assign using_pc = is_jump_operation && (is_jal || is_branch);
 
   decode decode (
@@ -91,10 +92,11 @@ module cpu_top (
       .is_load(is_load),
       .is_writeback(is_writeback),
       .use_adder(use_adder),
-      .use_pc(using_pc)
+      .use_pc(using_pc),
+      .is_system(is_system)
   );
 
-  wire we;
+  wire reg_we = is_system ? is_system_writeback : is_writeback;
   wire [31:0] rs1_data;
   wire [31:0] rs2_data;
   wire [31:0] rd_data;
@@ -138,6 +140,18 @@ module cpu_top (
       .is_branch_jump(is_branch_jump)
   );
 
+  csr csr (
+      .clk(clk),
+      .csr_addr(),
+      .csr_wdata(),
+      .csr_rdata(),
+      .csr_op(),
+      .is_system(),
+
+      .csr_out()
+  );
+
+
   ////////////////////////////////////////////////
   // memory stage
   // ////////////////////////////////////////////
@@ -180,14 +194,5 @@ module cpu_top (
   ////////////////////////////////////////////////
   // csr
   ////////////////////////////////////////////////
-  csr csr (
-      .clk(clk),
-      .csr_addr(),
-      .csr_we(),
-      .csr_wdata(),
-      .csr_rdata(),
-
-      .csr_out()
-  );
 
 endmodule
