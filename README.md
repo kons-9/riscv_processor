@@ -4,6 +4,13 @@
 rs32i + zicarで、user mode + machine modeの命令セットを実装しています。
 インオーダプロセッサなのでfence命令は実装していません。
 
+## 実行
+filename.vを追加し、その中で.hexファイルまでのパスをdefineしてください.
+```bash
+# example
+`define FILENAME "/path/to/hoge.hex"
+```
+
 ## サポートしている命令
 1. ecall
 2. ebreak

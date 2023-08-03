@@ -8,6 +8,7 @@ src/*.s
 !src/*test*.s
 src/*.elf
 src/*.bin
+filename.v
 
 *.txt
 *.vcd

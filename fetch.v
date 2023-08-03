@@ -1,3 +1,4 @@
+`include "filename.v"
 module fetch (
     input clk,
     input [31:0] pc,
@@ -34,8 +35,6 @@ module instbram (
   reg [31:0] mem[0:16383];
   // reg [31:0] mem[0:16383];
 
-  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/fib.hex";
-  // parameter FILENAME = "/Users/kons9/Documents2/programming/riscv_processor/bin/all_operation_test.hex";
   integer i;
   initial begin
     // initialize memory to zero
