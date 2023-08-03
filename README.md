@@ -1,7 +1,7 @@
 # riscv processor
 
 特権命令付きのRISC-Vプロセッサです。
-rs32i + zicarで、user mode + machine modeの命令セットを実装しています。
+rs32i + zicar + machine modeの特権命令セットを実装しています。
 インオーダプロセッサなのでfence命令は実装していません。
 
 ## 実行

@@ -271,7 +271,6 @@ module csr (
         end
         `CSR_EBREAK: begin
           start_exception();
-          $display("unimplemented");
         end
         /////////////////////////////////////////////
         // future work
