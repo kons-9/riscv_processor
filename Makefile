@@ -4,7 +4,7 @@ OBJ = $(wildcard *.v)
 TARGET = cpu
 
 run: $(OBJ)
-	iverilog -o $(TARGET) -s $(TOP) $(OBJ)
+	iverilog -g2012 -o $(TARGET) -s $(TOP) $(OBJ)
 	./$(TARGET)
 
 clean:

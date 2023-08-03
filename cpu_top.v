@@ -21,6 +21,8 @@ module cpu_top (
   wire [31:0] pc_plus4;
 
   wire [31:0] alu_out;
+  wire [31:0] next_csr_pc;
+  wire enable_pc_update_from_csr;
 
   gen_next_pc gen_next_pc (
       .rst(rst),
@@ -31,6 +33,8 @@ module cpu_top (
       .is_branch(is_branch),
       .alu_out(alu_out),
       .pc(pc),
+      .enable_pc_update_from_csr(enable_pc_update_from_csr),
+      .csr_pc(next_csr_pc),
 
       .pc_next (pc_next),
       .pc_plus4(pc_plus4)
@@ -96,7 +100,7 @@ module cpu_top (
       .is_system(is_system)
   );
 
-  wire reg_we = is_system ? is_system_writeback : is_writeback;
+  // wire reg_we = is_system ? is_system_writeback : is_writeback;
   wire [31:0] rs1_data;
   wire [31:0] rs2_data;
   wire [31:0] rd_data;
@@ -140,18 +144,6 @@ module cpu_top (
       .is_branch_jump(is_branch_jump)
   );
 
-  csr csr (
-      .clk(clk),
-      .csr_addr(),
-      .csr_wdata(),
-      .csr_rdata(),
-      .csr_op(),
-      .is_system(),
-
-      .csr_out()
-  );
-
-
   ////////////////////////////////////////////////
   // memory stage
   // ////////////////////////////////////////////
@@ -160,10 +152,12 @@ module cpu_top (
   wire [13:0] mem_addr = alu_out[13:0];
 
   wire [31:0] loaddata;
+  wire is_illegal;
 
   mem mem (
       .clk(clk),
       .is_store(is_store),
+      .is_illegal(is_illegal),
       .addr(mem_addr),
       .wdata(rs2_data),
       .store_load_type(funct3),
@@ -174,6 +168,8 @@ module cpu_top (
   // writeback stage
   // //////////////////////////////////////////////
 
+  wire [31:0] csr_data;
+  wire is_write_back_from_csr;
   // set we, rd_data
   writeback writeback (
       .is_writeback(is_writeback),
@@ -182,17 +178,38 @@ module cpu_top (
       .loaddata(loaddata),
       .alu_out(alu_out),
       .pc_plus4(pc_plus4),
+      .csr_data(csr_data),
+      .csr_writeback(is_write_back_from_csr),
+      .is_illegal(is_illegal),
 
       .we(we),
       .rd_data(rd_data)
   );
 
   ////////////////////////////////////////////////
-  // control
-  ////////////////////////////////////////////////
-
-  ////////////////////////////////////////////////
   // csr
   ////////////////////////////////////////////////
+
+  csr csr (
+      .clk(clk),
+      .rst(rst),
+      .csr_addr(imm[11:0]),
+      .rs_addr(rs),
+      .csr_wdata(rs1_data),
+      .csr_op(funct3),
+      .is_system(is_system),
+      .funct12(imm[11:0]),
+      .csr_destreg_addr(rd),
+      .uimm(rs),
+      .illegal_instruction(1'b0),  // future work
+      .access_fault(31'b0),  // future work
+      .pc(pc),
+      // output
+      .csr_out(csr_data),
+      .is_illegal(is_illegal),
+      .write_back(is_write_back_from_csr),
+      .next_csr_pc(next_csr_pc),
+      .enable_pc_update_from_csr(enable_pc_update_from_csr)
+  );
 
 endmodule

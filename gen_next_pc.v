@@ -7,6 +7,8 @@ module gen_next_pc (
     input is_branch,
     input [31:0] alu_out,
     input [31:0] pc,
+    input enable_pc_update_from_csr,
+    input [31:0] csr_pc,
 
     output wire [31:0] pc_next,
     output wire [31:0] pc_plus4
@@ -14,9 +16,11 @@ module gen_next_pc (
   // todo branch prediction
 
   assign pc_plus4 = pc + 8'h04;
-  assign pc_next  = func_next_pc(rst, is_jump, is_jal, is_jalr, is_branch, is_branch_jump, alu_out, pc_plus4);
+  assign pc_next = func_next_pc(
+      rst, is_jump, is_jal, is_jalr, is_branch, is_branch_jump, alu_out, pc_plus4
+  );
 
-  function [31:0] func_next_pc;
+  function automatic [31:0] func_next_pc;
     input rst;
     input is_jump;
     input is_jal;
@@ -28,6 +32,8 @@ module gen_next_pc (
     begin
       if (rst) begin
         func_next_pc = 8'h00;
+      end else if (enable_pc_update_from_csr) begin
+        func_next_pc = csr_pc;
       end else if (is_jump && (is_jal | is_jalr | (is_branch & is_branch_jump))) begin
         func_next_pc = jump_addr;
       end else begin
