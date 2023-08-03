@@ -39,9 +39,10 @@ module csr (
   wire [30:0] exception_code;
   wire update_pc, is_interrupt;
 
-  function [32:0] get_mcause;
+  function automatic [32:0] get_mcause;
     input [11:0] funct12;
     input [31:0] pc;
+    input global_mie;
     input [31:0] mie;
     input [31:0] mip;
     input [30:0] access_fault;
@@ -76,7 +77,7 @@ module csr (
     end
   endfunction
   assign {update_pc, is_interrupt, exception_code} = get_mcause(
-      funct12, pc, mie, mip, access_fault, illegal_instruction, is_illegal
+      funct12, pc, global_mie, mie, mip, access_fault, illegal_instruction, is_illegal
   );
   // assign {update_pc, is_interrupt, exception_code} = 33'b0;
 
@@ -131,7 +132,7 @@ module csr (
   wire is_write_illegal;
   assign is_mode_illegal = (is_system && cpu_mode > addr_mode);
   assign is_write_illegal = (is_write && addr_restriction == `CSR_READ_ONLY);
-  assign is_illegal = (is_mode_illegal || is_write_illegal);
+  assign is_illegal = is_system && (is_mode_illegal || is_write_illegal);
 
 
   wire [31:0] bitmask;
@@ -159,7 +160,7 @@ module csr (
       csr_bitmask_uimm,
       csr_cleared_uimm
   );
-  assign write_back = tmp_write_back && !is_illegal && csr_destreg_addr != 0;
+  assign write_back = is_system && tmp_write_back && !is_illegal && csr_destreg_addr != 0;
 
   function automatic [34:0] decode_csr_operation;
     input [2:0] csr_op;
@@ -238,7 +239,7 @@ module csr (
       // interrupt
       // go to trap vector
       start_exception();
-    end else if (is_system && is_illegal || illegal_instruction) begin
+    end else if (is_illegal || illegal_instruction) begin
       // illegal instruction
       // go to trap vector
       start_exception();
