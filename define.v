@@ -22,6 +22,7 @@
 `define TYPE_B 3'b011
 `define TYPE_U 3'b100
 `define TYPE_J 3'b101
+`define TYPE_JR 3'b110
 
 // ALU operation
 `define ALU_ADD 3'b000

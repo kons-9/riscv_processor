@@ -1,4 +1,4 @@
-`include "filename.v"
+
 module fetch (
     input clk,
     input [31:0] pc,
@@ -14,7 +14,7 @@ module fetch (
   assign addr = pc[7:0];
   instbram instbram (
       .clk (clk),
-      .addr(pc[7:0]),
+      .addr(pc),
       .inst(inst)
   );
 
@@ -29,23 +29,25 @@ endmodule
 
 module instbram (
     input clk,
-    input [7:0] addr,
+    input [31:0]addr,
     output reg [31:0] inst
 );
-  reg [31:0] mem[0:16383];
+  reg [31:0] mem[0:31999];
   // reg [31:0] mem[0:16383];
-
+//  parameter FILENAME= "C:\Users\gotos\Documents\riscv_processor\src\fib.hex";
+  parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
   integer i;
   initial begin
     // initialize memory to zero
-    for (i = 0; i < 16384; i = i + 1) begin
-      mem[i] = 0;
-    end
+//    for (i = 0; i < 16384; i = i + 1) begin
+//      mem[i] = 0;
+//    end
     $readmemh(FILENAME, mem);
   end
+  wire [31:0]mem_addr = addr >> 2;
   always @(*) begin
     // inst <= 32'h074000EF;
-    inst <= mem[addr>>2];
+    inst <= mem[mem_addr];
   end
 
 endmodule

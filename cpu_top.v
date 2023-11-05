@@ -7,6 +7,9 @@ module cpu_top (
   reg is_interrupt = 0;
   reg is_exception = 0;
   reg [31:0] pc;
+  initial begin
+    pc = 'h8000;
+  end
 
   //////////////////////////////////////////////////
   // fetch stage
@@ -16,7 +19,7 @@ module cpu_top (
   wire is_jal;
   wire is_jalr;
   wire is_branch;
-  wire [7:0] jump_addr;
+//  wire [7:0] jump_addr;
   wire [31:0] pc_next;
   wire [31:0] pc_plus4;
 
@@ -96,7 +99,8 @@ module cpu_top (
       .is_load(is_load),
       .is_writeback(is_writeback),
       .use_adder(use_adder),
-      .use_pc(using_pc),
+      .use_pc(use_pc),
+      .is_lui(is_lui),
       .is_system(is_system)
   );
 
@@ -123,9 +127,9 @@ module cpu_top (
   // //////////////////////////////////////////////
 
   wire [ 2:0] alu_op = use_adder ? `ALU_ADD : funct3;
-  wire [31:0] alu_in1 = using_pc ? pc : rs1_data;
+  wire [31:0] alu_in1 = (using_pc | use_pc) ? pc : rs1_data;
   wire [31:0] alu_in2 = is_r_type ? rs2_data : imm;
-
+  wire [31:0] tmp_alu_out;
   alu alu (
       .alu_op(alu_op),
       .in1(alu_in1),
@@ -134,8 +138,9 @@ module cpu_top (
       .shamt(shamt),
       .is_r_type(is_r_type),
 
-      .out(alu_out)
+      .out(tmp_alu_out)
   );
+  assign alu_out = is_lui ? imm : tmp_alu_out;
 
   branch_conditional branch_conditional (
       .branch_op(funct3),
@@ -149,7 +154,7 @@ module cpu_top (
   // ////////////////////////////////////////////
 
   // mem[rs1 + offset(imm)] -> rd
-  wire [13:0] mem_addr = alu_out[13:0];
+  wire [31:0] mem_addr = alu_out[16:0]>>2;
 
   wire [31:0] loaddata;
   wire is_illegal;

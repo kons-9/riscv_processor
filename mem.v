@@ -2,14 +2,14 @@ module mem (
     input clk,
     input is_store,
     input is_illegal,
-    input [13:0] addr,
+    input [16:0] addr,
     input [31:0] wdata,
     input [2:0] store_load_type,
     output [31:0] loaddata
 );
-  reg [31:0] mem[0:32767];
+  reg [31:0] mem[0:65536];
 
-  parameter FILENAME = "/home/wslmtl/Documents/riscv/bin/mem.hex";
+  parameter FILENAME = "/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
   initial begin
     $readmemh(FILENAME, mem);
   end

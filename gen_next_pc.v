@@ -31,7 +31,7 @@ module gen_next_pc (
     input [31:0] pc_plus4;
     begin
       if (rst) begin
-        func_next_pc = 8'h00;
+        func_next_pc = 32'h00008000;
       end else if (enable_pc_update_from_csr) begin
         func_next_pc = csr_pc;
       end else if (is_jump && (is_jal | is_jalr | (is_branch & is_branch_jump))) begin

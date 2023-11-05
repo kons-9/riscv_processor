@@ -25,7 +25,7 @@ module writeback (
     begin
       if (csr_writeback) begin
         get_rd_data = csr_data;
-      end else if (opcode_type == `TYPE_J) begin
+      end else if (opcode_type == `TYPE_J || opcode_type == `TYPE_JR) begin
         get_rd_data = pc_plus4;
       end else if (is_load) begin
         get_rd_data = loaddata;

@@ -19,6 +19,7 @@ module decode (
     output is_writeback,
     output use_adder,
     output use_pc,
+    output is_lui,
 
     // for system call
     output is_system
@@ -27,19 +28,17 @@ module decode (
   assign rd = inst[11:7];
   assign funct3 = inst[14:12];
   assign rs = inst[19:15];
-  assign rs2 = inst[24:20];
+  assign rs2 = is_r_type ? inst[24:20] : 0;
   assign funct7 = inst[31:25];
   assign {is_load, is_store, is_writeback, use_adder, opcode_type} = get_opcode_info(opcode);
   assign is_system = (opcode == `OPCODE_SYSTEM);
   assign imm = decide_imm(opcode_type, inst);
   assign is_r_type = (opcode_type == `TYPE_R);
+  assign is_u_type = (opcode_type == `TYPE_U);
+  assign is_lu = inst[5];
   assign shamt = inst[24:20];
-
-  wire [31:0] imm_i;
-  wire [31:0] imm_s;
-  wire [31:0] imm_b;
-  wire [31:0] imm_u;
-  wire [31:0] imm_j;
+  assign use_pc = is_u_type & is_lu == 0;
+  assign is_lui = is_u_type & is_lu == 1; 
 
   function [31:0] decide_imm;
     input [2:0] opcode_type;
@@ -48,6 +47,7 @@ module decode (
       case (opcode_type)
         `TYPE_R: decide_imm = 0;
         `TYPE_I: decide_imm = {{20{inst[31]}}, inst[31:20]};
+        `TYPE_JR: decide_imm = {{20{inst[31]}}, inst[31:20]};
         `TYPE_S: decide_imm = {{20{inst[31]}}, inst[31:25], inst[11:7]};
         `TYPE_B: decide_imm = {{19{inst[31]}}, inst[31], inst[7], inst[30:25], inst[11:8], 1'b0};
         `TYPE_U: decide_imm = {inst[31:12], 12'b0};
@@ -62,12 +62,12 @@ module decode (
     input [6:0] opcode;
     begin
       case (opcode)
-        `OPCODE_LUI: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_U};
-        `OPCODE_AUIPC: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_U};
+        `OPCODE_LUI: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_U};
+        `OPCODE_AUIPC: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_U};
         `OPCODE_OP: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_R};
         `OPCODE_OP_IMM: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b0, `TYPE_I};
         `OPCODE_JAL: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_J};
-        `OPCODE_JALR: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_J};
+        `OPCODE_JALR: get_opcode_info = {1'b0, 1'b0, 1'b1, 1'b1, `TYPE_JR};
         `OPCODE_BRANCH: get_opcode_info = {1'b0, 1'b0, 1'b0, 1'b1, `TYPE_B};
         `OPCODE_LOAD: get_opcode_info = {1'b1, 1'b0, 1'b1, 1'b1, `TYPE_I};
         `OPCODE_STORE: get_opcode_info = {1'b0, 1'b1, 1'b0, 1'b1, `TYPE_S};
