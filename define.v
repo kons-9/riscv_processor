@@ -54,6 +54,10 @@
 `define STORE_SH 3'b001
 `define STORE_SW 3'b010
 
+// for uart
+`define UART_TX_ADDR 32'hf6fff070
+`define HARDWARE_COUNTER_ADDR 32'hffffff00
+
 //////////////////////////////////////////////
 // for csr
 //////////////////////////////////////////////

@@ -1,7 +1,8 @@
 `include "define.v"
 module cpu_top (
     input clk,
-    input rst
+    input rst,
+    output wire uart_tx
 );
 
   reg is_interrupt = 0;
@@ -156,17 +157,23 @@ module cpu_top (
   // mem[rs1 + offset(imm)] -> rd
   wire [31:0] mem_addr = alu_out[16:0]>>2;
 
-  wire [31:0] loaddata;
+  wire [31:0] t_loaddata;
   wire is_illegal;
+
+  wire uart_we = is_store && (mem_addr == `UART_TX_ADDR);
+  wire [7:0] uart_data = rs2_data[7:0];
+
+  wire [31:0] hardware_counter;
+  wire [31:0] loaddata = ((mem_addr == `HARDWARE_COUNTER_ADDR) && (funct3 == `LOAD_LW)) ? hardware_counter : t_loaddata;
 
   mem mem (
       .clk(clk),
-      .is_store(is_store),
+      .is_store(is_store & !uart_we),
       .is_illegal(is_illegal),
       .addr(mem_addr),
       .wdata(rs2_data),
       .store_load_type(funct3),
-      .loaddata(loaddata)
+      .loaddata(t_loaddata)
   );
 
   //////////////////////////////////////////////////
@@ -216,5 +223,31 @@ module cpu_top (
       .next_csr_pc(next_csr_pc),
       .enable_pc_update_from_csr(enable_pc_update_from_csr)
   );
+
+  ////////////////////////////////////////////////
+  // uart
+  // ////////////////////////////////////////////
+ 
+  uart uart0(
+     .uart_tx(uart_tx),     // UART transmit wire
+     // Inputs
+     .uart_wr_i(uart_we),   // Raise to transmit byte
+     .uart_dat_i(uart_data),  // 8-bit data
+     .sys_clk_i(clk),   // System clock, 100 MHz
+     .sys_rstn_i(rst)    // System reset
+  );
+
+  ////////////////////////////////////////////////
+  // hardware counter
+  // ////////////////////////////////////////////
+  //
+
+  hardware_counter hardware_counter_0 (
+      .clk_ip(clk),
+      .rstn_ip(rst),
+      .counter_op(hardware_counter)
+  );
+
+
 
 endmodule
