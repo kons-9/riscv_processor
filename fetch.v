@@ -3,11 +3,7 @@ module fetch (
     input clk,
     input [31:0] pc,
 
-    output [31:0] inst,
-    output wire is_jump,
-    output wire is_jal,
-    output wire is_jalr,
-    output wire is_branch
+    output [31:0] inst
 );
 
   wire [7:0] addr;
@@ -17,13 +13,6 @@ module fetch (
       .addr(pc),
       .inst(inst)
   );
-
-  // for branch prediction
-  // assign is_jump = (inst[6:0] == 7'b110xx11);
-  assign is_jump = (inst[1:0] == 2'b11 && inst[6:4] == 3'b110);
-  assign is_jal = (inst[3] & 1);
-  assign is_jalr = (inst[2] & 1);
-  assign is_branch = (~is_jal & ~is_jalr);
 
 endmodule
 
@@ -35,7 +24,7 @@ module instbram (
   reg [31:0] mem[0:31999];
   // reg [31:0] mem[0:16383];
 //  parameter FILENAME= "C:\Users\gotos\Documents\riscv_processor\src\fib.hex";
-  parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
+  parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/tests/Coremark/code.hex";
   integer i;
   initial begin
     // initialize memory to zero

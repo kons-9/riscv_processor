@@ -1,11 +1,12 @@
 `include "define.v"
 module branch_conditional (
     input [2:0] branch_op,
+    input is_branch,
     input [31:0] rs1_data,
     input [31:0] rs2_data,
     output wire is_branch_jump
 );
-  assign is_branch_jump = func_branch_conditional(branch_op, rs1_data, rs2_data);
+  assign is_branch_jump = is_branch & func_branch_conditional(branch_op, rs1_data, rs2_data);
 
   function func_branch_conditional;
     input [2:0] branch_op;

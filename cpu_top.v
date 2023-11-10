@@ -1,41 +1,32 @@
 `include "define.v"
 module cpu_top (
     input clk,
-    input rst,
+    input rstn,
     output wire uart_tx
 );
-
-  reg is_interrupt = 0;
-  reg is_exception = 0;
-  reg [31:0] pc;
-  initial begin
-    pc = 'h8000;
-  end
 
   //////////////////////////////////////////////////
   // fetch stage
   // //////////////////////////////////////////////
-  wire is_jump_operation;
-  wire is_branch_jump;
-  wire is_jal;
-  wire is_jalr;
-  wire is_branch;
-//  wire [7:0] jump_addr;
+  reg [31:0] pc;
   wire [31:0] pc_next;
+
+  always @(posedge clk) begin
+    pc <= pc_next;
+  end
+
+  wire is_branch_jump;
+  wire is_ja;
+  wire [31:0] alu_out;
+  wire enable_pc_update_from_csr;
+  wire [31:0] next_csr_pc;
+
   wire [31:0] pc_plus4;
 
-  wire [31:0] alu_out;
-  wire [31:0] next_csr_pc;
-  wire enable_pc_update_from_csr;
-
   gen_next_pc gen_next_pc (
-      .rst(rst),
-      .is_jump(is_jump_operation),
-      .is_branch_jump(is_branch_jump),
-      .is_jal(is_jal),
-      .is_jalr(is_jalr),
-      .is_branch(is_branch),
-      .alu_out(alu_out),
+      .rstn(rstn),
+      .is_jump_operation(is_branch_jump | is_ja),
+      .jump_addr(alu_out),
       .pc(pc),
       .enable_pc_update_from_csr(enable_pc_update_from_csr),
       .csr_pc(next_csr_pc),
@@ -44,109 +35,120 @@ module cpu_top (
       .pc_plus4(pc_plus4)
   );
 
-  always @(posedge clk) begin
-    pc <= pc_next;
-  end
-
-
   wire [31:0] inst;
   fetch fetch (
       .clk(clk),
       .pc (pc),
 
-      .inst(inst),
-      .is_jump(is_jump_operation),
-      .is_jal(is_jal),
-      .is_jalr(is_jalr),
-      .is_branch(is_branch)
+      .inst(inst)
   );
 
   ////////////////////////////////////////////////
-  // decode stage
+  // decode stage && register read
   ////////////////////////////////////////////////
 
-  wire [6:0] opcode;
-  wire [4:0] rs;
+  wire [4:0] rs1;
   wire [4:0] rs2;
   wire [4:0] rd;
-  wire [2:0] funct3;
-  wire [6:0] funct7;
   wire [31:0] imm;
-  wire [4:0] shamt;
-  wire [2:0] opcode_type;
-  wire is_r_type;
   wire is_store;
   wire is_load;
   wire is_writeback;
-  wire using_pc;
+  wire [2:0] alu_op;
+  wire [2:0] csr_op;
+  wire [2:0] ls_op;
+  wire alu_in1_use_pc;
+  wire alu_in2_use_imm;
+  wire use_raw_imm;
+  wire is_sub;
+  wire is_sra;
+  wire is_r_type;
+  wire [4:0] shamt;
+  wire [2:0] branch_op;
+  wire is_branch;
+  wire store_pc4;
+
   wire is_system;
-  assign using_pc = is_jump_operation && (is_jal || is_branch);
 
   decode decode (
       .inst(inst),
-      .is_jump(is_jump_operation),
 
-      .opcode(opcode),
-      .rs(rs),
+      .rs1(rs1),
       .rs2(rs2),
       .rd(rd),
-      .funct3(funct3),
-      .funct7(funct7),
-      .opcode_type(opcode_type),
       .imm(imm),
-      .shamt(shamt),
-      .is_r_type(is_r_type),
       .is_store(is_store),
       .is_load(is_load),
       .is_writeback(is_writeback),
-      .use_adder(use_adder),
-      .use_pc(use_pc),
-      .is_lui(is_lui),
+      .alu_op(alu_op),
+      .csr_op(csr_op),
+      .ls_op(ls_op),
+      .alu_in1_use_pc(alu_in1_use_pc),
+      .alu_in2_use_imm(alu_in2_use_imm),
+      .use_raw_imm(use_raw_imm),
+      .is_sub(is_sub),
+      .is_sra(is_sra),
+      .is_r_type(is_r_type),
+      .shamt(shamt),
+      .branch_op(branch_op),
+      .is_branch(is_branch),
+      .store_pc4(store_pc4),
+      .is_ja(is_ja),
       .is_system(is_system)
   );
 
-  // wire reg_we = is_system ? is_system_writeback : is_writeback;
   wire [31:0] rs1_data;
   wire [31:0] rs2_data;
   wire [31:0] rd_data;
+  wire [31:0] alu_in1;
+  wire [31:0] alu_in2;
+  wire [4:0] shift;
 
   regfile regfile (
       .clk(clk),
-      .rst(rst),
+      .rstn(rstn),
       .we(we),
-      .rs1(rs),
+      .rs1(rs1),
       .rs2(rs2),
       .rd(rd),
       .rd_data(rd_data),
+      .alu_in1_use_pc(alu_in1_use_pc),
+      .alu_in2_use_imm(alu_in2_use_imm),
+      .pc(pc),
+      .imm(imm),
+      .is_r_type(is_r_type),
+      .shamt(shamt),
 
       .rs1_data(rs1_data),
-      .rs2_data(rs2_data)
+      .rs2_data(rs2_data),
+      .alu_in1(alu_in1),
+      .alu_in2(alu_in2),
+      .shift(shift)
   );
+
 
   //////////////////////////////////////////////////
   // execute stage
   // //////////////////////////////////////////////
 
-  wire [ 2:0] alu_op = use_adder ? `ALU_ADD : funct3;
-  wire [31:0] alu_in1 = (using_pc | use_pc) ? pc : rs1_data;
-  wire [31:0] alu_in2 = is_r_type ? rs2_data : imm;
-  wire [31:0] tmp_alu_out;
   alu alu (
       .alu_op(alu_op),
       .in1(alu_in1),
       .in2(alu_in2),
-      .funct7(funct7),
-      .shamt(shamt),
-      .is_r_type(is_r_type),
+      .shift(shift),
+      .is_sub(is_sub),
+      .is_sra(is_sra),
+      .use_raw_imm(use_raw_imm),
 
-      .out(tmp_alu_out)
+      .out(alu_out)
   );
-  assign alu_out = is_lui ? imm : tmp_alu_out;
 
   branch_conditional branch_conditional (
-      .branch_op(funct3),
+      .is_branch(is_branch),
+      .branch_op(branch_op),
       .rs1_data(rs1_data),
       .rs2_data(rs2_data),
+
       .is_branch_jump(is_branch_jump)
   );
 
@@ -155,25 +157,23 @@ module cpu_top (
   // ////////////////////////////////////////////
 
   // mem[rs1 + offset(imm)] -> rd
-  wire [31:0] mem_addr = alu_out[16:0]>>2;
-
-  wire [31:0] t_loaddata;
   wire is_illegal;
-
-  wire uart_we = is_store && (mem_addr == `UART_TX_ADDR);
-  wire [7:0] uart_data = rs2_data[7:0];
-
   wire [31:0] hardware_counter;
-  wire [31:0] loaddata = ((mem_addr == `HARDWARE_COUNTER_ADDR) && (funct3 == `LOAD_LW)) ? hardware_counter : t_loaddata;
+
+  wire uart_we;
+  wire [31:0] loaddata;
 
   mem mem (
       .clk(clk),
-      .is_store(is_store & !uart_we),
+      .is_store(is_store),
       .is_illegal(is_illegal),
-      .addr(mem_addr),
+      .mem_addr(alu_out),
       .wdata(rs2_data),
-      .store_load_type(funct3),
-      .loaddata(t_loaddata)
+      .store_load_type(ls_op),
+      .hardware_counter(hardware_counter),
+
+      .loaddata(loaddata),
+      .uart_we(uart_we)
   );
 
   //////////////////////////////////////////////////
@@ -186,13 +186,13 @@ module cpu_top (
   writeback writeback (
       .is_writeback(is_writeback),
       .is_load(is_load),
-      .opcode_type(opcode_type),
       .loaddata(loaddata),
       .alu_out(alu_out),
       .pc_plus4(pc_plus4),
       .csr_data(csr_data),
       .csr_writeback(is_write_back_from_csr),
       .is_illegal(is_illegal),
+      .store_pc4(store_pc4),
 
       .we(we),
       .rd_data(rd_data)
@@ -204,15 +204,15 @@ module cpu_top (
 
   csr csr (
       .clk(clk),
-      .rst(rst),
+      .rstn(rstn),
       .csr_addr(imm[11:0]),
-      .rs_addr(rs),
+      .rs_addr(rs1),
       .csr_wdata(rs1_data),
-      .csr_op(funct3),
+      .csr_op(csr_op),
       .is_system(is_system),
       .funct12(imm[11:0]),
       .csr_destreg_addr(rd),
-      .uimm(rs),
+      .uimm(rs1),
       .illegal_instruction(1'b0),  // future work
       .access_fault(31'b0),  // future work
       .pc(pc),
@@ -227,6 +227,8 @@ module cpu_top (
   ////////////////////////////////////////////////
   // uart
   // ////////////////////////////////////////////
+  //
+  wire [7:0] uart_data = rs2_data[7:0];
  
   uart uart0(
      .uart_tx(uart_tx),     // UART transmit wire
@@ -234,7 +236,7 @@ module cpu_top (
      .uart_wr_i(uart_we),   // Raise to transmit byte
      .uart_dat_i(uart_data),  // 8-bit data
      .sys_clk_i(clk),   // System clock, 100 MHz
-     .sys_rstn_i(rst)    // System reset
+     .sys_rstn_i(rstn)    // System reset
   );
 
   ////////////////////////////////////////////////
@@ -244,7 +246,7 @@ module cpu_top (
 
   hardware_counter hardware_counter_0 (
       .clk_ip(clk),
-      .rstn_ip(rst),
+      .rstn_ip(rstn),
       .counter_op(hardware_counter)
   );
 

@@ -2,7 +2,7 @@
 
 module csr (
     input clk,
-    input rst,
+    input rstn,
     input [11:0] csr_addr,
     input [4:0] rs_addr,
     input [31:0] csr_wdata,
@@ -214,7 +214,7 @@ module csr (
   ///////////////////////
 
   always @(posedge clk) begin
-    if (rst) begin
+    if (!rstn) begin
       // initialize
       init();
     end else if (is_system && !is_priv) begin

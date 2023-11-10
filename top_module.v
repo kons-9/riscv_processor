@@ -30,7 +30,7 @@ module top_module(
 
     cpu_top cpu_top0 (
         .clk(sysclk),
-        .rst(cpu_resetn),
+        .rstn(cpu_resetn),
         .uart_tx(uart_tx)
     );
 

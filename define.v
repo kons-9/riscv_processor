@@ -15,7 +15,7 @@
 // ecall, ebreak and priviledged
 `define OPCODE_SYSTEM 7'b1110011
 
-// decode type
+// decode type used by imm
 `define TYPE_R 3'b000
 `define TYPE_I 3'b001
 `define TYPE_S 3'b010
