@@ -35,13 +35,11 @@ module decode (
   assign rs1 = inst[19:15];
   assign rs2 = inst[24:20];
   wire [6:0] funct7 = inst[31:25];
-  wire [6:0] funct12 = inst[31:20];
   assign shamt = inst[24:20];
 
   wire [2:0] opcode_type;
   wire is_jal;
   wire is_jalr;
-  wire is_r_type;
   wire use_adder;
 
   assign {is_jal, is_jalr, is_branch, is_r_type, is_system, is_load, is_store, is_writeback, use_adder, alu_in1_use_pc, alu_in2_use_imm, opcode_type} = get_opcode_info(opcode);

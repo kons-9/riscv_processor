@@ -103,6 +103,7 @@ module cpu_top (
   wire [31:0] alu_in1;
   wire [31:0] alu_in2;
   wire [4:0] shift;
+  wire we;
 
   regfile regfile (
       .clk(clk),

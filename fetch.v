@@ -19,12 +19,13 @@ endmodule
 module instbram (
     input clk,
     input [31:0]addr,
-    output reg [31:0] inst
+    output wire [31:0] inst
 );
   reg [31:0] mem[0:31999];
   // reg [31:0] mem[0:16383];
 //  parameter FILENAME= "C:\Users\gotos\Documents\riscv_processor\src\fib.hex";
-  parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/tests/Coremark/code.hex";
+  parameter FILENAME= "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
+  // parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
   integer i;
   initial begin
     // initialize memory to zero
@@ -34,9 +35,6 @@ module instbram (
     $readmemh(FILENAME, mem);
   end
   wire [31:0]mem_addr = addr >> 2;
-  always @(*) begin
-    // inst <= 32'h074000EF;
-    inst <= mem[mem_addr];
-  end
+  assign inst = mem[mem_addr];
 
 endmodule

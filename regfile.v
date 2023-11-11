@@ -11,7 +11,7 @@ module regfile (
     input [31:0] pc,
     input [31:0] imm,
     input is_r_type,
-    input shamt,
+    input [4:0] shamt,
 
     output [31:0] rs1_data,
     output [31:0] rs2_data,

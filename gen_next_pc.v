@@ -11,7 +11,7 @@ module gen_next_pc (
 );
   // todo branch prediction
   //
-  assign pc_plus4 = pc + 8'h04;
+  assign pc_plus4 = pc + 'h04;
   assign pc_next = func_next_pc(
       rstn, 
       is_jump_operation,

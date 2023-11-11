@@ -13,13 +13,14 @@ module mem (
 );
   reg [31:0] mem[0:65536];
 
-  parameter FILENAME = "/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
+  parameter FILENAME = "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
+  // parameter FILENAME = "/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
   initial begin
     $readmemh(FILENAME, mem);
   end
 
   wire [31:0] data;
-  wire [16:0] addr = mem_addr >> 2;
+  wire [31:0] addr = mem_addr >> 2;
   wire [1:0] addr_rem = mem_addr[1:0];
 
   wire is_hardware_counter = (mem_addr == `HARDWARE_COUNTER_ADDR) && (store_load_type == `LOAD_LW);
