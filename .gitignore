@@ -12,3 +12,4 @@ filename.v
 
 *.txt
 *.vcd
+obj_dir

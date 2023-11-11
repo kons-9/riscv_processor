@@ -1,6 +1,5 @@
 module tb_top ();
   // test bench of top module
-
   reg clk;
   reg rstn;
   

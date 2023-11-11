@@ -12,6 +12,7 @@ module writeback (
     output we,
     output [31:0] rd_data
 );
+
   assign we = !is_illegal && (csr_writeback | is_writeback);
   assign rd_data = get_rd_data(csr_writeback, csr_data, is_load, loaddata, alu_out, store_pc4);
 

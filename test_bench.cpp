@@ -71,7 +71,6 @@ int main() {
         // end else begin
         //     $fwrite(fd, "0x%04x: 0x%08x # (no destination)\n", cpu_top.pc, cpu_top.inst);
         // end
-
 #ifdef DEBUG
         if (top.cpu_top__DOT__is_store) {
             std::fprintf(fd,
