@@ -13,8 +13,9 @@ module mem (
 );
   reg [31:0] mem[0:65536];
 
-  parameter FILENAME = "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
+  // parameter FILENAME = "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
   // parameter FILENAME = "/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
+  parameter FILENAME = "/home/kons9/Documents/TA/b3exp/benchmarks/Coremark/data.hex";
   initial begin
     $readmemh(FILENAME, mem);
   end

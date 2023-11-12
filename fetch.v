@@ -24,8 +24,10 @@ module instbram (
   reg [31:0] mem[0:31999];
   // reg [31:0] mem[0:16383];
 //  parameter FILENAME= "C:\Users\gotos\Documents\riscv_processor\src\fib.hex";
-  parameter FILENAME= "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
+  // parameter FILENAME= "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
   // parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
+  parameter FILENAME= "/home/kons9/Documents/TA/b3exp/benchmarks/Coremark_for_Synthesis/code.hex";
+  // parameter FILENAME= "/home/kons9/Documents/TA/b3exp/benchmarks/Coremark/code.hex";
   integer i;
   initial begin
     // initialize memory to zero
