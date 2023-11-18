@@ -59,10 +59,6 @@ int main() {
 
   top.rstn = 1;
   top.eval();
-  printf("pc = %x\n", top.pc);
-  printf("rs1 = %x\n", top.rs1);
-  printf("rs2 = %x\n", top.rs2);
-
   std::vector<char> c = {};
 
   for (std::size_t cycle = 0; cycle < max_cycle; ++cycle) {
@@ -76,14 +72,15 @@ int main() {
     }
     timer_ps += 1'000'000'000'000 / clock_Hz;
   }
+  c[0] = 'V';
 
+  std::printf("\n");
   if (c.size() == 1 && c[0] == 'A') {
-    std::printf("\n");
     return 0;
   } else {
-    std::printf("\n");
-    std::printf("Error: got %lu characters, but expected 1 character 'A'.\n",
-                c.size());
+    std::fprintf(stderr,
+                 "Error: got %lu characters, but expected 1 character 'A'.\n",
+                 c.size());
     return 1;
   }
 }
