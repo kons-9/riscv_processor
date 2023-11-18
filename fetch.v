@@ -15,6 +15,10 @@ module fetch (
   );
 
 endmodule
+`ifndef BASEPATH
+  // error if
+  base path is not defined
+`endif
 
 module instbram (
     input clk,
@@ -22,18 +26,29 @@ module instbram (
     output wire [31:0] inst
 );
   reg [31:0] mem[0:31999];
-  // reg [31:0] mem[0:16383];
-//  parameter FILENAME= "C:\Users\gotos\Documents\riscv_processor\src\fib.hex";
-  // parameter FILENAME= "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
-  // parameter FILENAME= "/Users/gotos/Documents/b3exp/benchmarks/Coremark/code.hex";
-  parameter FILENAME= "/home/kons9/Documents/TA/b3exp/benchmarks/Coremark_for_Synthesis/code.hex";
-  // parameter FILENAME= "/home/kons9/Documents/TA/b3exp/benchmarks/Coremark/code.hex";
+
+  `ifdef COREMARKSYN
+    parameter FILENAME= {`BATHPATH, "Coremark_for_Synthesis/code.hex"};
+  `elsif COREMARK
+    parameter FILENAME= {`BASEPATH, "Coremark/code.hex"};
+  `elsif INTREGIMM
+    parameter FILENAME= {`BASEPATH, "tests/IntRegImm/code.hex"};
+  `elsif UART
+    parameter FILENAME= {`BASEPATH, "/tests/Uart/code.hex"};
+  `elsif ZEROREGISTER
+    parameter FILENAME= {`BASEPATH, "tests/ZeroRegister/code.hex"};
+  `elsif CONTROLTRANSFER
+    parameter FILENAME= {`BASEPATH, "tests/ControlTransfer/code.hex"};
+  `elsif LOADANDSTORE
+    parameter FILENAME= {`BASEPATH, "tests/LoadAndStore/code.hex"};
+  `elsif INTREGREG
+    parameter FILENAME= {`BASEPATH, "tests/IntRegReg/code.hex"};
+  `else 
+    parameter FILENAME= {`BATHPATH, "Coremark_for_Synthesis/code.hex"};
+  `endif
+  ;
   integer i;
   initial begin
-    // initialize memory to zero
-//    for (i = 0; i < 16384; i = i + 1) begin
-//      mem[i] = 0;
-//    end
     $readmemh(FILENAME, mem);
   end
   wire [31:0]mem_addr = addr >> 2;

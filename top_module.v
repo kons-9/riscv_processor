@@ -19,12 +19,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
+`define COREMARKSYN
 
 module top_module(
     input sysclk,
-    input [7:0] sw,
-    input [7:0] cpu_resetn,
-    output [7:0] led,
+    input cpu_resetn,
     output wire uart_tx
     );
 
@@ -33,6 +32,4 @@ module top_module(
         .rstn(cpu_resetn),
         .uart_tx(uart_tx)
     );
-
-
 endmodule

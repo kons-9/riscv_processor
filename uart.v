@@ -1,6 +1,6 @@
 module uart(
    // Outputs
-   // uart_busy,   // High means UART is transmitting
+   uart_busy,   // High means UART is transmitting
    uart_tx,     // UART transmit wire
    // Inputs
    uart_wr_i,   // Raise to transmit byte
@@ -14,7 +14,7 @@ module uart(
   input sys_clk_i;
   input sys_rstn_i;
 
-  // output uart_busy;
+  output uart_busy;
   output uart_tx;
 
   reg [3:0] bitcount;
@@ -27,7 +27,8 @@ module uart(
   // sys_clk_i is 100MHz.  We want a 115200Hz clock
 
   reg [28:0] d;
-  wire [28:0] dInc = d[28] ? (115200) : (115200 - 350_000);
+//  wire [28:0] dInc = d[28] ? (115200) : (115200 - 350_000);
+  wire [28:0] dInc = d[28] ? (115200) : (115200 - 10_000_000);
   wire [28:0] dNxt = d + dInc;
   always @(posedge sys_clk_i or negedge sys_rstn_i) begin
     if (!sys_rstn_i) begin

@@ -30,6 +30,7 @@ module cpu_top (
       .pc(pc),
       .enable_pc_update_from_csr(enable_pc_update_from_csr),
       .csr_pc(next_csr_pc),
+      .is_stall(uart_busy),
 
       .pc_next (pc_next),
       .pc_plus4(pc_plus4)
@@ -230,9 +231,11 @@ module cpu_top (
   // ////////////////////////////////////////////
   //
   wire [7:0] uart_data = rs2_data[7:0];
+  wire uart_busy;
  
   uart uart0(
      .uart_tx(uart_tx),     // UART transmit wire
+     .uart_busy(uart_busy),   // UART busy wire
      // Inputs
      .uart_wr_i(uart_we),   // Raise to transmit byte
      .uart_dat_i(uart_data),  // 8-bit data
