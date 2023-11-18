@@ -1,4 +1,5 @@
 #include "Vcpp_cpu_top.h"
+#include "util.hpp"
 #include <cstdio>
 #include <fstream>
 #include <iostream>
@@ -72,15 +73,13 @@ int main() {
     }
     timer_ps += 1'000'000'000'000 / clock_Hz;
   }
-  c[0] = 'V';
 
   std::printf("\n");
   if (c.size() == 1 && c[0] == 'A') {
     return 0;
   } else {
-    std::fprintf(stderr,
-                 "Error: got %lu characters, but expected 1 character 'A'.\n",
-                 c.size());
+    eprintf("Error: got %lu characters, but expected 1 character 'A'.\n",
+            c.size());
     return 1;
   }
 }

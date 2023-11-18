@@ -24,6 +24,13 @@ static std::string to_8digit_hex(const IData x) {
   return std::string(buf);
 }
 
+static void eprintf(const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
+}
+
 static std::string to_xml(const IData pc, const IData reg[32]) {
   std::string ret = "";
   ret += "<?xml version='1.0' encoding='utf-8'?>\n";

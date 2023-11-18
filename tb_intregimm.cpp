@@ -40,7 +40,7 @@ int main() {
   top.clk = 1;
   top.eval();
   if (top.pc != prepc) {
-    std::printf("Error: simulation is not finished.\n");
+    eprintf("Error: simulation is not finished.\n");
     return 1;
   }
 
@@ -59,7 +59,7 @@ int main() {
     // std command diff
     auto err = std::system(diffstr.c_str());
     if (err != 0) {
-      std::printf("Error: result is not matched with cfg.xml.\n");
+      eprintf("Error: result is not matched with cfg.xml.\n");
       return 1;
     }
 
