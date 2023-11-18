@@ -34,7 +34,7 @@ module instbram (
   `elsif INTREGIMM
     parameter FILENAME= {`BASEPATH, "tests/IntRegImm/code.hex"};
   `elsif UART
-    parameter FILENAME= {`BASEPATH, "/tests/Uart/code.hex"};
+    parameter FILENAME= {`BASEPATH, "tests/Uart/code.hex"};
   `elsif ZEROREGISTER
     parameter FILENAME= {`BASEPATH, "tests/ZeroRegister/code.hex"};
   `elsif CONTROLTRANSFER

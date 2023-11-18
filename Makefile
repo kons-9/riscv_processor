@@ -1,13 +1,12 @@
-BASEPATH ="\"/home/kons9/Documents/TA/b3exp/benchmarks\""
+BASEPATH ="\"/home/kons9/Documents/TA/b3exp/benchmarks/\""
+CPPTOP = cpp_cpu_top.v
 
 # cpp test bench files
-TESTCPP =tb_uart.cpp
+TESTCPP =tb_uart.cpp tb_intregimm
 TESTOBJ =$(TESTCPP:.cpp=)
-TESTTOP =cpp_cpu_top.v
 
 SIMCPP = tb_coremark.cpp tb_coremarksyn.cpp
 SIMOBJ = $(SIMCPP:.cpp=)
-SIMTOP = cpu_top.v
 
 # verilog test bench files
 VTB = $(wildcard tb_*.v)
@@ -17,11 +16,11 @@ SRC = $(filter-out $(VTB), $(wildcard *.v))
 TARGET = cpu
 HEX = $(wildcard src/*.hex)
 
-test_cpp: $(TESTCPP:.cpp=)
+test_cpp: $(TESTOBJ)
 	@echo "===== \033[32mstart cpp test\033[0m ====="
 	@ok_count=0; \
 	fail_count=0; \
-	for i in $<; do \
+	for i in $(TESTOBJ); do \
 		echo "===== \033[32mstart $$i\033[0m ====="; \
 		./obj_dir/$$i; \
 		if [ $$? -eq 0 ]; then \
@@ -40,13 +39,13 @@ test_cpp: $(TESTCPP:.cpp=)
 # 2: top module name
 define FUNC_BUILD_CPP
 $(1): $(SRC) $(1).cpp 
-	verilator -Wno-context -Wno-style -Wno-lint -Wpedantic --trace -cc $(2) --exe $(1).cpp -O3 -o $(1) -DBASEPATH=$(BASEPATH) -D$(shell echo $(1) | cut -f 2 -d "_" | tr a-z A-Z)
-	@make -C obj_dir -f V$(2:.v=.mk) 1>/dev/null
+	verilator -Wno-context -Wno-style -Wno-lint -Wpedantic --trace -cc $(CPPTOP) --exe $(1).cpp -O3 -o $(1) -DBASEPATH=$(BASEPATH) -D$(shell echo $(1) | cut -f 2 -d "_" | tr a-z A-Z)
+	make -C obj_dir -f V$(CPPTOP:.v=.mk) 1>/dev/null
 endef
 
-$(foreach obj,$(TESTOBJ),$(eval $(call FUNC_BUILD_CPP,$(obj),$(TESTTOP))))
+$(foreach obj, $(TESTOBJ), $(eval $(call FUNC_BUILD_CPP,$(obj))))
 
-$(foreach obj, $(SIMOBJ), $(eval $(call FUNC_BUILD_CPP,$(obj),$(SIMTOP))))
+$(foreach obj, $(SIMOBJ),$(eval $(call FUNC_BUILD_CPP,$(obj))))
 
 hex: $(HEX)
 	cp $(HEX) bin/
