@@ -13,3 +13,6 @@ filename.v
 *.txt
 *.vcd
 obj_dir
+
+.cache
+compile_commands.json

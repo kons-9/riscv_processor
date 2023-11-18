@@ -61,6 +61,7 @@ int main() {
   top.eval();
   printf("pc = %x\n", top.pc);
   printf("rs1 = %x\n", top.rs1);
+  printf("rs2 = %x\n", top.rs2);
 
   std::vector<char> c = {};
 

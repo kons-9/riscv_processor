@@ -1,4 +1,4 @@
-#include "Vcpu_top.h"
+#include "Vcpp_cpu_top.h"
 #include <cstdio>
 #include <fstream>
 #include <verilated.h>
@@ -38,13 +38,7 @@ void uart_rx(unsigned int u) {
 }
 
 int main() {
-
-  // fd = $fopen("output.trace", "w");
-#ifdef DEBUG
-  FILE *fd = std::fopen("output.trace", "w");
-#endif
-
-  Vcpu_top top;
+  Vcpp_cpu_top top;
   top.clk = 0;
   top.eval();
 
