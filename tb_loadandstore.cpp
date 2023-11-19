@@ -46,7 +46,7 @@ int main() {
 
   std::string xml = to_xml(top.pc, top.regfile);
   std::string ref_xml;
-  auto path = std::string(BASEPATH) + "/tests/IntRegReg/cfg.xml";
+  auto path = std::string(BASEPATH) + "/tests/LoadAndStore/cfg.xml";
   ref_xml =
       std::string(std::istreambuf_iterator<char>(std::ifstream(path).rdbuf()),
                   std::istreambuf_iterator<char>());

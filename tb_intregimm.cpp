@@ -60,6 +60,7 @@ int main() {
     auto err = std::system(diffstr.c_str());
     if (err != 0) {
       eprintf("Error: result is not matched with cfg.xml.\n");
+      eprintf("%s\n", diffstr.c_str());
       return 1;
     }
 

@@ -28,7 +28,7 @@ module instbram (
   reg [31:0] mem[0:31999];
 
   `ifdef COREMARKSYN
-    parameter FILENAME= {`BATHPATH, "Coremark_for_Synthesis/code.hex"};
+    parameter FILENAME= {`BASEPATH, "Coremark_for_Synthesis/code.hex"};
   `elsif COREMARK
     parameter FILENAME= {`BASEPATH, "Coremark/code.hex"};
   `elsif INTREGIMM
@@ -43,8 +43,9 @@ module instbram (
     parameter FILENAME= {`BASEPATH, "tests/LoadAndStore/code.hex"};
   `elsif INTREGREG
     parameter FILENAME= {`BASEPATH, "tests/IntRegReg/code.hex"};
-  `else 
-    parameter FILENAME= {`BATHPATH, "Coremark_for_Synthesis/code.hex"};
+  `else
+      error occurd
+    // parameter FILENAME= {`BATHPATH, "Coremark_for_Synthesis/code.hex"};
   `endif
   ;
   integer i;

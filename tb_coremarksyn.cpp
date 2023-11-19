@@ -3,8 +3,6 @@
 #include <fstream>
 #include <verilated.h>
 
-#define COREMARKSYN
-
 // Set the clock speed of your processor. 10MHz is the default.
 static constexpr std::size_t clock_Hz = 10'000'000;
 // UART baudrate
@@ -24,8 +22,7 @@ void uart_rx(unsigned int u) {
     s = timer_ps;
     b = 0;
     c = 0;
-  } else if (s != 0 &&
-             s + 1'000'000'000'000 / uart_Hz / 2 * (2 * b + 3) < timer_ps) {
+  } else if (s != 0 && s + second / uart_Hz / 2 * (2 * b + 3) < timer_ps) {
     if (b < 8) {
       c += u << b;
       ++b;
@@ -53,6 +50,7 @@ int main() {
 
   top.rstn = 1;
   top.eval();
+  auto preinst = top.inst;
 
   for (std::size_t cycle = 0; cycle < max_cycle; ++cycle) {
     top.clk = 0;
@@ -60,6 +58,23 @@ int main() {
     top.clk = 1;
     top.eval();
     uart_rx(top.uart_tx);
-    timer_ps += 1'000'000'000'000 / clock_Hz;
+    timer_ps += second / clock_Hz;
+    if (top.is_stall) {
+      continue;
+    }
+    if (top.inst == preinst) {
+      break;
+    }
+    preinst = top.inst;
+  }
+
+  // wait 1 second for uart
+  for (std::size_t cycle = 0; cycle < clock_Hz; ++cycle) {
+    top.clk = 0;
+    top.eval();
+    top.clk = 1;
+    top.eval();
+    uart_rx(top.uart_tx);
+    timer_ps += second / clock_Hz;
   }
 }

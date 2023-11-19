@@ -11,6 +11,11 @@ filename.vを追加し、その中で.hexファイルまでのパスをdefineし
 `define FILENAME "/path/to/hoge.hex"
 ```
 
+## verilator test
+テスト名を`tb_hoge.cpp`として、`tb_hoge.v`を追加してください。
+その後、`BASEPATH`を設定し、`fetch.v`のcase文にテスト名を追加してください。
+`tb_hoge.cpp`の場合条件は`HOGE`としてください。
+
 ## サポートしている命令
 1. ecall
 2. ebreak

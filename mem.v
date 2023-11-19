@@ -15,7 +15,13 @@ module mem (
 
   // parameter FILENAME = "/mnt/c/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
   // parameter FILENAME = "/Users/gotos/Documents/b3exp/benchmarks/Coremark/data.hex";
-  parameter FILENAME = "/home/kons9/Documents/TA/b3exp/benchmarks/Coremark/data.hex";
+`ifdef COREMARKSYN
+  parameter FILENAME = {`BASEPATH, "Coremark_for_Synthesis/data.hex"};
+`elsif COREMARK
+  parameter FILENAME = {`BASEPATH, "Coremark/data.hex"};
+`else
+  parameter FILENAME = {`BASEPATH, "Coremark/data.hex"};
+`endif
   initial begin
     $readmemh(FILENAME, mem);
   end
@@ -31,17 +37,17 @@ module mem (
   assign uart_we = (mem_addr == `UART_TX_ADDR) && is_store;
 
   function [31:0] get_data;
-      input [31:0] raw_data;
-      input [1:0] addr_rem;
-      begin
-        case (addr_rem)
-          2'b00: get_data = raw_data[31:0];
-          2'b01: get_data = {{8{raw_data[31]}}, raw_data[31:8]};
-          2'b10: get_data = {{16{raw_data[31]}}, raw_data[31:16]};
-          2'b11: get_data = {{24{raw_data[31]}}, raw_data[31:24]};
-          default: get_data = raw_data;
-        endcase
-      end
+    input [31:0] raw_data;
+    input [1:0] addr_rem;
+    begin
+      case (addr_rem)
+        2'b00:   get_data = raw_data[31:0];
+        2'b01:   get_data = {{8{raw_data[31]}}, raw_data[31:8]};
+        2'b10:   get_data = {{16{raw_data[31]}}, raw_data[31:16]};
+        2'b11:   get_data = {{24{raw_data[31]}}, raw_data[31:24]};
+        default: get_data = raw_data;
+      endcase
+    end
   endfunction
 
   function [31:0] get_loaddata;
@@ -60,19 +66,21 @@ module mem (
   endfunction
 
   always @(negedge clk) begin
-    if (!is_illegal && is_store && !uart_we ) begin
-      case ({store_load_type, addr_rem})
-        {`STORE_SB, 2'b00}: mem[addr][7:0] <= wdata[7:0];
-        {`STORE_SB, 2'b01}: mem[addr][15:8] <= wdata[7:0];
-        {`STORE_SB, 2'b10}: mem[addr][23:16] <= wdata[7:0];
-        {`STORE_SB, 2'b11}: mem[addr][31:24] <= wdata[7:0];
+    if (!is_illegal && is_store && !uart_we) begin
+      case ({
+        store_load_type, addr_rem
+      })
+        {`STORE_SB, 2'b00} : mem[addr][7:0] <= wdata[7:0];
+        {`STORE_SB, 2'b01} : mem[addr][15:8] <= wdata[7:0];
+        {`STORE_SB, 2'b10} : mem[addr][23:16] <= wdata[7:0];
+        {`STORE_SB, 2'b11} : mem[addr][31:24] <= wdata[7:0];
 
-        {`STORE_SH, 2'b00}: mem[addr][15:0] <= wdata[15:0];
-        {`STORE_SH, 2'b01}: mem[addr][23:8] <= wdata[15:0];
-        {`STORE_SH, 2'b10}: mem[addr][31:16] <= wdata[15:0];
+        {`STORE_SH, 2'b00} : mem[addr][15:0] <= wdata[15:0];
+        {`STORE_SH, 2'b01} : mem[addr][23:8] <= wdata[15:0];
+        {`STORE_SH, 2'b10} : mem[addr][31:16] <= wdata[15:0];
 
-        {`STORE_SW, 2'b00}: mem[addr] <= wdata;
-        default:   mem[addr] <= wdata;
+        {`STORE_SW, 2'b00} : mem[addr] <= wdata;
+        default: mem[addr] <= wdata;
       endcase
     end
   end

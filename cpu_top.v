@@ -8,7 +8,7 @@ module cpu_top (
   //////////////////////////////////////////////////
   // fetch stage
   // //////////////////////////////////////////////
-  reg [31:0] pc;
+  reg  [31:0] pc;
   wire [31:0] pc_next;
 
   always @(posedge clk) begin
@@ -148,8 +148,8 @@ module cpu_top (
   branch_conditional branch_conditional (
       .is_branch(is_branch),
       .branch_op(branch_op),
-      .rs1_data(rs1_data),
-      .rs2_data(rs2_data),
+      .rs1_data (rs1_data),
+      .rs2_data (rs2_data),
 
       .is_branch_jump(is_branch_jump)
   );
@@ -175,7 +175,7 @@ module cpu_top (
       .hardware_counter(hardware_counter),
 
       .loaddata(loaddata),
-      .uart_we(uart_we)
+      .uart_we (uart_we)
   );
 
   //////////////////////////////////////////////////
@@ -232,15 +232,15 @@ module cpu_top (
   //
   wire [7:0] uart_data = rs2_data[7:0];
   wire uart_busy;
- 
-  uart uart0(
-     .uart_tx(uart_tx),     // UART transmit wire
-     .uart_busy(uart_busy),   // UART busy wire
-     // Inputs
-     .uart_wr_i(uart_we),   // Raise to transmit byte
-     .uart_dat_i(uart_data),  // 8-bit data
-     .sys_clk_i(clk),   // System clock, 100 MHz
-     .sys_rstn_i(rstn)    // System reset
+
+  uart uart0 (
+      .uart_tx(uart_tx),     // UART transmit wire
+      .uart_busy(uart_busy),   // UART busy wire
+      // Inputs
+      .uart_wr_i(uart_we),   // Raise to transmit byte
+      .uart_dat_i(uart_data),  // 8-bit data
+      .sys_clk_i(clk),   // System clock, 100 MHz
+      .sys_rstn_i(rstn)    // System reset
   );
 
   ////////////////////////////////////////////////

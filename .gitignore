@@ -16,3 +16,4 @@ obj_dir
 
 .cache
 compile_commands.json
+*.trace
