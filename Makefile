@@ -18,19 +18,14 @@ TARGET = cpu
 HEX = $(wildcard src/*.hex)
 
 coremark: tb_coremark
-	./obj_dir/tb_coremark
-	diff --suppress-common-lines -s coremark.trace $$(echo $$(echo $(BASEPATH) | tr -d '\"'))Coremark.RV32I.trace | head -n 5
-	echo "===== coremark result ====="
-	head -n 5 coremark.trace
-	head -n 5 $$(echo $$(echo $(BASEPATH) | tr -d '\"'))Coremark.RV32I.trace
+	@./obj_dir/tb_coremark
 
 coremarksyn: tb_coremarksyn
-	./obj_dir/tb_coremarksyn
+	@./obj_dir/tb_coremarksyn
 
 sim: $(SIMOBJ)
-	./obj_dir/tb_coremark
-	./obj_dir/tb_coremarksyn
-
+	@./obj_dir/tb_coremark
+	@./obj_dir/tb_coremarksyn
 
 test_cpp: $(TESTOBJ)
 	@echo "===== \033[32mstart cpp test\033[0m ====="
@@ -70,7 +65,7 @@ $(foreach obj, $(TESTOBJ), $(eval $(call FUNC_BUILD_CPP,$(obj))))
 $(foreach obj, $(SIMOBJ),$(eval $(call FUNC_BUILD_CPP,$(obj))))
 
 hex: $(HEX)
-	cp $(HEX) bin/
+	@cp $(HEX) bin/
 
 # iverilog setting
 
