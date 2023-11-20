@@ -14,8 +14,12 @@ VTB = $(wildcard tb_*.v)
 
 # all *.v files which are not tb_*.v
 SRC = $(filter-out $(VTB), $(wildcard *.v))
+
+# for iverilog
 TARGET = cpu
 HEX = $(wildcard src/*.hex)
+
+default: test_cpp
 
 coremark: tb_coremark
 	@./obj_dir/tb_coremark
@@ -64,11 +68,11 @@ $(foreach obj, $(TESTOBJ), $(eval $(call FUNC_BUILD_CPP,$(obj))))
 
 $(foreach obj, $(SIMOBJ),$(eval $(call FUNC_BUILD_CPP,$(obj))))
 
+# custom hex file
 hex: $(HEX)
 	@cp $(HEX) bin/
 
 # iverilog setting
-
 iverilog_run: $(SRC) $(VTB)
 	iverilog -g2012 -o $(TARGET) -s $(VTB) $(SRC)
 	./$(TARGET)
@@ -77,3 +81,4 @@ clean:
 	rm -f *.o *.out *.exe *.so *.a *.dll *.dylib $(TARGET)
 	rm -rf obj_dir
 
+.PHONY: clean hex iverilog_run test_cpp coremark coremarksyn sim default
